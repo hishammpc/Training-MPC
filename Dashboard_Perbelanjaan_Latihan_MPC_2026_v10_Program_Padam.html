@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+
+<html lang="ms-MY">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#0f2b46" name="theme-color"/>
+<title>Dashboard Perbelanjaan Latihan Kompetensi Warga MPC</title>
+<style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --ink: #132238;
+      --muted: #6c7b90;
+      --line: #dfe7f0;
+      --navy: #0f2b46;
+      --navy-2: #163e61;
+      --blue: #1e67d6;
+      --blue-soft: #eaf2ff;
+      --teal: #0c8a78;
+      --teal-soft: #e8f7f4;
+      --gold: #c98713;
+      --gold-soft: #fff5df;
+      --red: #c83d4a;
+      --red-soft: #fff0f2;
+      --shadow: 0 14px 38px rgba(24, 46, 75, .08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --sidebar: 252px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar);
+      background: linear-gradient(180deg, #0d2943 0%, #102f4c 62%, #0c253d 100%);
+      color: white;
+      padding: 22px 16px;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 10px 0 32px rgba(9, 31, 52, .11);
+    }
+    .brand {
+      background: white;
+      border-radius: 14px;
+      min-height: 74px;
+      display: grid;
+      place-items: center;
+      padding: 10px 12px;
+      overflow: hidden;
+    }
+    .brand img { width: 100%; height: auto; display: block; }
+    .brand-caption { margin: 13px 6px 25px; }
+    .brand-caption strong { display: block; font-size: 13px; letter-spacing: .02em; }
+    .brand-caption span { display: block; color: #b9c9d8; font-size: 11px; margin-top: 4px; line-height: 1.45; }
+
+    .nav-label { color: #91abc1; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .13em; padding: 0 10px 8px; }
+    .nav { display: grid; gap: 7px; }
+    .nav-btn {
+      border: 0;
+      color: #d9e5ee;
+      background: transparent;
+      border-radius: 12px;
+      padding: 12px 13px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-align: left;
+      transition: .2s ease;
+    }
+    .nav-btn svg { flex: 0 0 20px; opacity: .85; }
+    .nav-btn:hover { background: rgba(255,255,255,.07); color: white; }
+    .nav-btn.active {
+      background: linear-gradient(90deg, rgba(60, 132, 255, .28), rgba(45, 205, 181, .10));
+      color: white;
+      box-shadow: inset 3px 0 0 #6ea4ff;
+    }
+    .nav-btn.active svg { opacity: 1; }
+    .sidebar-foot { margin-top: auto; padding: 16px 10px 2px; color: #9db3c6; font-size: 11px; line-height: 1.55; }
+
+    .main { margin-left: var(--sidebar); min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      min-height: 88px;
+      background: rgba(244, 247, 251, .88);
+      backdrop-filter: blur(14px);
+      border-bottom: 0;
+      padding: 20px 28px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .title-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; transform: translateY(5px); }
+    .menu-btn {
+      display: none;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 11px;
+      width: 40px;
+      height: 40px;
+      color: var(--navy);
+    }
+    .title-text { min-width: 0; }
+    .title-text h1 { margin: 0; font-size: clamp(20px, 2.15vw, 28px); line-height: 1.12; letter-spacing: -.02em; white-space: nowrap; overflow: visible; font-weight: 850; }
+    .title-text p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .year-control { display: flex; align-items: center; gap: 9px; transform: translateY(5px); }
+    .year-control label { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .year-control select {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--navy);
+      border-radius: 11px;
+      padding: 10px 32px 10px 12px;
+      outline: none;
+      font-weight: 800;
+      box-shadow: 0 5px 15px rgba(20,45,70,.04);
+    }
+
+    .content { padding: 26px 28px 40px; }
+    .view { display: none; animation: fade .22s ease; }
+    .view.active { display: block; }
+    @keyframes fade { from { opacity: .35; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+    .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+    .section-head h2 { margin: 0; font-size: 20px; letter-spacing: -.015em; }
+    .section-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .section-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 15px; margin-bottom: 18px; }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid #e4ebf2;
+      border-radius: var(--radius);
+      padding: 17px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      min-height: 130px;
+    }
+    .kpi::after { content: ""; position: absolute; width: 90px; height: 90px; border-radius: 50%; right: -36px; top: -40px; background: rgba(30,103,214,.06); }
+    .kpi .eyebrow { font-size: 11px; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .kpi .value { margin-top: 14px; font-weight: 850; font-size: clamp(21px, 2.4vw, 29px); letter-spacing: -.035em; }
+    .kpi .kpi-icon { width:36px; height:36px; border-radius:11px; display:grid; place-items:center; background:var(--blue-soft); color:var(--blue); position:relative; z-index:1; }
+    .kpi .kpi-icon svg { width:20px; height:20px; }
+    .kpi.teal .kpi-icon { background:var(--teal-soft); color:var(--teal); }
+    .kpi.gold .kpi-icon { background:var(--gold-soft); color:var(--gold); }
+    .kpi.red .kpi-icon { background:var(--red-soft); color:var(--red); }
+    .kpi .kpi-icon + .value { margin-top:12px; }
+    .kpi .meta { margin-top: 8px; color: var(--muted); font-size: 11px; display: flex; align-items: center; gap: 7px; }
+    .kpi .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+    .kpi.teal .dot { background: var(--teal); }
+    .kpi.gold .dot { background: var(--gold); }
+    .kpi.red .dot { background: var(--red); }
+    .kpi.negative .value { color: var(--red); }
+
+    .panel-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, .8fr); gap: 15px; margin-bottom: 18px; }
+    .panel {
+      background: var(--surface);
+      border: 1px solid #e4ebf2;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-header { padding: 17px 18px 12px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .panel-header h3 { margin: 0; font-size: 14px; }
+    .panel-header p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .panel-body { padding: 0 18px 18px; }
+
+    .chart-wrap { position: relative; height: 290px; width: 100%; }
+    #expenseChart { width: 100%; height: 100%; display: block; }
+    .chart-tooltip {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -110%);
+      background: #102b44;
+      color: white;
+      padding: 8px 10px;
+      border-radius: 9px;
+      font-size: 11px;
+      box-shadow: 0 8px 26px rgba(9, 30, 50, .22);
+      transition: opacity .08s ease;
+      white-space: nowrap;
+    }
+    .chart-tooltip.show { opacity: 1; }
+
+    .util-block { display: grid; gap: 15px; padding: 8px 0 3px; }
+    .util-ring {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 4px auto 2px;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--blue) var(--p, 0%), #e9eff5 0);
+      position: relative;
+    }
+    .util-ring::after { content:""; position: absolute; inset: 15px; border-radius: 50%; background: white; box-shadow: inset 0 0 0 1px #edf2f6; }
+    .util-ring .ring-text { position: relative; z-index: 1; text-align: center; }
+    .util-ring .ring-text strong { display:block; font-size: 25px; letter-spacing: -.04em; }
+    .util-ring .ring-text span { display:block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .mini-stats { display:grid; gap: 8px; }
+    .mini-row { display:flex; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid #eef2f6; padding-top:9px; font-size:11px; color:var(--muted); }
+    .mini-row strong { color:var(--ink); font-size:12px; }
+
+    .table-card { background: var(--surface); border: 1px solid #e4ebf2; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .table-toolbar { padding: 15px 17px; border-bottom: 1px solid #edf1f5; display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .table-toolbar h3 { margin:0; font-size:14px; }
+    .toolbar-right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .search { position: relative; }
+    .search input { border:1px solid var(--line); border-radius:10px; padding:9px 11px 9px 34px; outline:none; min-width:240px; background:#fbfcfe; }
+    .search svg { position:absolute; width:16px; left:11px; top:50%; transform:translateY(-50%); color:#8291a2; }
+    .filter-chip { display:none; align-items:center; gap:7px; background:var(--blue-soft); color:var(--blue); border:1px solid #cee0ff; border-radius:999px; padding:7px 10px; font-size:11px; font-weight:750; }
+    .filter-chip.show { display:inline-flex; }
+    .filter-chip button { border:0; background:transparent; color:inherit; padding:0; font-weight:900; }
+    .table-scroll { overflow:auto; }
+    table { border-collapse: collapse; width:100%; min-width: 850px; }
+    th, td { padding: 12px 14px; text-align:left; border-bottom:1px solid #edf1f5; vertical-align:top; }
+    th { font-size:10px; font-weight:850; text-transform:uppercase; letter-spacing:.06em; color:#708095; background:#f8fafc; position:sticky; top:0; z-index:1; }
+    td { font-size:12px; color:#263a51; }
+    td.money, th.money { text-align:right; white-space:nowrap; }
+    tbody tr:hover { background:#fbfdff; }
+    .empty { padding: 34px 18px; text-align:center; color:var(--muted); font-size:12px; }
+    .badge { display:inline-flex; align-items:center; border-radius:999px; padding:5px 8px; font-size:10px; font-weight:800; background:var(--blue-soft); color:var(--blue); white-space:nowrap; }
+    .row-actions { display:flex; gap:5px; justify-content:flex-end; }
+    .icon-btn { border:1px solid var(--line); background:white; border-radius:8px; width:31px; height:31px; display:grid; place-items:center; color:#53657a; }
+    .icon-btn:hover { border-color:#b8cadc; color:var(--navy); }
+    .icon-btn.danger:hover { border-color:#ffc7cc; color:var(--red); background:var(--red-soft); }
+    .icon-btn svg { width:14px; height:14px; }
+
+    .form-card { background:white; border:1px solid #e4ebf2; border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:18px; }
+    .form-head { padding:18px; border-bottom:1px solid #edf1f5; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .form-head h3 { margin:0; font-size:15px; }
+    .form-head p { margin:4px 0 0; color:var(--muted); font-size:11px; }
+    .status-pill { border-radius:999px; padding:7px 10px; font-size:10px; font-weight:800; background:#eff4f8; color:#53657a; }
+    .status-pill.editing { background:var(--gold-soft); color:#97610c; }
+    .form-body { padding:18px; }
+    .form-grid { display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; }
+    .field { grid-column: span 4; min-width:0; }
+    .field.span-6 { grid-column: span 6; }
+    .field.span-8 { grid-column: span 8; }
+    .field.span-12 { grid-column: span 12; }
+    .field label { display:block; font-size:11px; font-weight:800; color:#465a70; margin-bottom:6px; }
+    .field label span { color:var(--red); }
+    .field input, .field select, .field textarea {
+      width:100%; border:1px solid var(--line); background:#fbfcfe; border-radius:10px; padding:11px 12px; color:var(--ink); outline:none; transition:.15s ease;
+    }
+    .field textarea { min-height:100px; resize:vertical; line-height:1.45; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color:#9dbef1; background:white; box-shadow:0 0 0 3px rgba(30,103,214,.08); }
+    .help { color:var(--muted); font-size:10px; margin-top:5px; line-height:1.45; }
+    .form-actions { margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid #edf1f5; padding-top:16px; }
+    .btn { border:1px solid transparent; border-radius:10px; padding:10px 13px; display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:800; font-size:11px; transition:.15s ease; }
+    .btn svg { width:15px; height:15px; }
+    .btn-primary { background:var(--blue); color:white; box-shadow:0 8px 18px rgba(30,103,214,.18); }
+    .btn-primary:hover { background:#185cbf; }
+    .btn-secondary { background:white; color:var(--navy); border-color:var(--line); }
+    .btn-secondary:hover { background:#f7f9fc; }
+    .btn-warning { background:var(--gold-soft); color:#8d5b0e; border-color:#f1deb4; }
+    .btn-danger { background:var(--red-soft); color:var(--red); border-color:#ffd4d8; }
+    .btn:disabled { opacity:.42; cursor:not-allowed; box-shadow:none; }
+
+    .alloc-list { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .alloc-item { border:1px solid #e4ebf2; border-radius:12px; padding:12px; background:#fbfcfe; display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .alloc-item .name { font-size:11px; font-weight:850; line-height:1.35; }
+    .alloc-item .amount { font-size:12px; margin-top:5px; color:var(--teal); font-weight:800; }
+    .alloc-item .small-actions { display:flex; gap:4px; }
+
+    .report-cover {
+      background: linear-gradient(135deg, #0f2b46, #1a4d74);
+      color:white;
+      border-radius:var(--radius);
+      padding:23px;
+      margin-bottom:15px;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      align-items:center;
+      overflow:hidden;
+      position:relative;
+    }
+    .report-cover::after { content:""; position:absolute; width:230px; height:230px; border-radius:50%; right:-90px; top:-100px; border:38px solid rgba(255,255,255,.05); }
+    .report-cover h2 { margin:0; font-size:22px; position:relative; z-index:1; }
+    .report-cover p { margin:7px 0 0; color:#cbd9e5; font-size:11px; position:relative; z-index:1; }
+    .report-cover .report-logo { width:230px; max-width:40%; background:white; border-radius:11px; padding:9px; position:relative; z-index:1; }
+    .report-cover .report-logo img { width:100%; display:block; }
+    .report-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:15px; }
+    .report-stat { background:white; border:1px solid #e4ebf2; border-radius:14px; padding:15px; }
+    .report-stat span { color:var(--muted); font-size:10px; font-weight:750; text-transform:uppercase; letter-spacing:.05em; }
+    .report-stat strong { display:block; margin-top:7px; font-size:20px; }
+    .report-note { margin-top:15px; background:#fff9ea; border:1px solid #f4e3b9; border-radius:12px; padding:12px 14px; color:#735516; font-size:11px; line-height:1.6; }
+    .report-meta { margin-top:14px; display:flex; justify-content:space-between; color:var(--muted); font-size:10px; gap:10px; flex-wrap:wrap; }
+
+    .notice { background:#eef6ff; border:1px solid #d7e7fb; border-radius:12px; padding:11px 13px; color:#3d6087; font-size:11px; line-height:1.55; margin-bottom:15px; display:flex; gap:9px; align-items:flex-start; }
+    .notice svg { width:16px; flex:0 0 16px; margin-top:1px; }
+
+    .overlay { display:none; position:fixed; inset:0; background:rgba(4,18,30,.45); z-index:55; }
+    .overlay.show { display:block; }
+    .toast { position:fixed; right:20px; bottom:20px; z-index:100; background:#102b44; color:white; border-radius:12px; padding:11px 14px; box-shadow:0 16px 40px rgba(9,30,50,.23); font-size:11px; max-width:min(370px, calc(100vw - 40px)); opacity:0; transform:translateY(12px); pointer-events:none; transition:.22s ease; }
+    .toast.show { opacity:1; transform:none; }
+    .toast.success { background:#126d61; }
+    .toast.error { background:#a72f3a; }
+
+    @media (max-width: 1100px) {
+      .kpi-grid { grid-template-columns:repeat(2,1fr); }
+      .panel-grid { grid-template-columns:1fr; }
+      .alloc-list { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width: 820px) {
+      .sidebar { transform:translateX(-103%); transition:.22s ease; }
+      .sidebar.open { transform:none; }
+      .main { margin-left:0; }
+      .menu-btn { display:grid; place-items:center; }
+      .topbar { padding:14px 16px 9px; min-height:72px; }
+      .title-wrap, .year-control { transform: translateY(2px); }
+      .content { padding:18px 16px 32px; }
+      .title-text p { display:none; }
+      .title-text h1 { font-size:16px; white-space:nowrap; }
+      .year-control label { display:none; }
+      .field, .field.span-6, .field.span-8 { grid-column:span 6; }
+      .field.span-12 { grid-column:span 12; }
+    }
+    @media (max-width: 560px) {
+      .kpi-grid, .report-grid { grid-template-columns:1fr; }
+      .kpi { min-height:112px; }
+      .section-head { align-items:flex-start; flex-direction:column; }
+      .field, .field.span-6, .field.span-8, .field.span-12 { grid-column:span 12; }
+      .form-grid { gap:11px; }
+      .alloc-list { grid-template-columns:1fr; }
+      .search { width:100%; }
+      .search input { width:100%; min-width:0; }
+      .toolbar-right { width:100%; }
+      .report-cover { align-items:flex-start; flex-direction:column; }
+      .report-cover .report-logo { max-width:100%; width:100%; }
+      .year-control select { padding:9px 27px 9px 10px; }
+      .title-text h1 { font-size:12.5px; line-height:1.15; white-space:nowrap; }
+    }
+
+    @media print {
+      body { background:white; }
+      .sidebar, .topbar, #dashboardView, #expenseView, .no-print, .overlay, .toast { display:none !important; }
+      .main { margin:0; }
+      .content { padding:0; }
+      #reportView { display:block !important; }
+      .report-cover, .panel, .table-card, .report-stat { box-shadow:none; break-inside:avoid; }
+      .report-cover { border-radius:0; }
+      .table-scroll { overflow:visible; }
+      table { min-width:0; font-size:9px; }
+      th, td { padding:7px 8px; }
+      @page { size:A4 landscape; margin:12mm; }
+    }
+  
+    /* Sidebar visual direction based on the supplied MPC reference */
+    :root { --sidebar: 220px; }
+    .sidebar {
+      background: #ffffff;
+      color: #62738c;
+      padding: 18px 14px 18px;
+      border-right: 1px solid #d9e4ec;
+      box-shadow: 12px 0 32px rgba(40, 73, 98, .08);
+    }
+    .brand {
+      background: transparent;
+      border-radius: 0;
+      min-height: 104px;
+      padding: 8px 10px 16px;
+      border-bottom: 1px solid #d9e4ec;
+      overflow: visible;
+    }
+    .brand img { width: 100%; max-width: 178px; margin: 0 auto; object-fit: contain; }
+    .nav { gap: 8px; margin-top: 18px; }
+    .nav-btn {
+      color: #63748d;
+      border-radius: 14px;
+      padding: 13px 14px;
+      gap: 11px;
+      font-size: 15px;
+      font-weight: 820;
+      min-height: 50px;
+    }
+    .nav-btn svg { width: 20px; height: 20px; color: #63748d; opacity: 1; }
+    .nav-btn:hover { background: #f3f8fb; color: #345b76; }
+    .nav-btn.active {
+      background: linear-gradient(135deg, #1e67d6 0%, #70a8f3 100%);
+      color: #ffffff;
+      box-shadow: 0 17px 32px rgba(30, 103, 214, .22);
+    }
+    .nav-btn.active svg { color: #ffffff; opacity: 1; }
+    .sidebar-foot {
+      margin-top: auto;
+      border-top: 1px solid #d9e4ec;
+      padding: 16px 8px 2px;
+      color: #657792;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    .table-subtitle { margin-top:4px; color:var(--muted); font-size:11px; }
+    .excel-summary-table { min-width: 1900px; }
+    .excel-summary-table th:nth-child(2), .excel-summary-table td:nth-child(2) { min-width: 380px; }
+    .excel-summary-table .total-row { font-weight: 850; background: #f5f9fc; }
+    .excel-summary-table td.negative { color: var(--red); font-weight: 800; }
+    @media (max-width: 820px) {
+      .sidebar { width: min(72vw, 230px); padding: 18px 14px; }
+      .brand { min-height: 104px; padding: 8px 10px 16px; }
+      .brand img { max-width: 178px; }
+      .nav-btn { min-height: 50px; font-size: 15px; padding: 13px 14px; }
+    }
+
+    .panel-grid.single { grid-template-columns:1fr; }
+    .kpi .meta { position:relative; z-index:1; }
+    .kpi .meta span:last-child { font-weight:400; }
+    #dashboardView > .kpi-grid { margin-top:0; }
+
+  
+
+    /* v17: Jadual Perbelanjaan Mengikut BOM Paper mengikut gaya Ringkasan butiran perbelanjaan */
+    .excel-summary-card .table-toolbar { border-bottom:none; padding-bottom:10px; }
+    .excel-summary-card .table-scroll { padding:12px 16px 16px; overflow-x:auto; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) {
+      min-width:2380px;
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border:1.5px solid #c7d5e5;
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+      table-layout:auto;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th {
+      text-align:center;
+      vertical-align:middle;
+      background:#d9e8f7;
+      color:#4e6f93;
+      font-weight:900;
+      white-space:normal;
+      line-height:1.2;
+      border-bottom:1px solid #c7d5e5;
+      padding:11px 8px;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th:first-child { border-top-left-radius:18px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th:last-child { border-top-right-radius:18px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) tbody tr:last-child td:first-child { border-bottom-left-radius:18px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) tbody tr:last-child td:last-child { border-bottom-right-radius:18px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(1) { min-width:48px; width:48px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) td:first-child { text-align:center; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(2) { min-width:340px; width:340px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(3),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(4),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(5),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(6) { min-width:118px; width:118px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(7) { min-width:360px; width:360px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(n+8):nth-child(-n+19) { min-width:86px; width:86px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) th:nth-child(20) { min-width:105px; width:105px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) td { padding:10px 8px; vertical-align:middle; border-bottom:1px solid #edf1f5; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) td.center-data { text-align:center; white-space:nowrap; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .bom-cell, :is(#excelSummaryTable, #reportExcelSummaryTable) .detail-cell { white-space:normal; line-height:1.35; overflow-wrap:anywhere; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-bom-row td { background:#fff; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-bom-row .center-data { font-weight:750; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-row td { background:#f8fbff; border-bottom:1px dashed #e4ebf2; padding-top:8px; padding-bottom:8px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-row .detail-cell { color:#355b79; font-weight:850; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-detail-row td { font-size:14px; line-height:1.35; background:#fff; padding-top:8px; padding-bottom:8px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-detail-row .detail-cell { padding-left:18px; color:#42576d; font-weight:500; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-detail-row td.center-data { font-size:14px; font-weight:600; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row td:nth-child(n+8) { font-size:13px; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row td { background:#f5f9fc; font-weight:850; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row .detail-cell { text-align:right; color:#50677e; }
+
+    /* v22: garis pemisah seperti format rujukan Excel */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th:nth-child(6),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-bom-row > td:nth-child(6),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-row > td:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-detail-row > td:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row > td:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-group-gap > td:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-gap > td:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .total-row > td:nth-child(6) {
+      border-right:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th:nth-child(19),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) tbody tr:not(.excel-group-gap):not(.excel-program-gap) > td:nth-last-child(2),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-group-gap > td:nth-last-child(2),
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-gap > td:nth-last-child(2) {
+      border-right:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row > td:nth-child(n+3) {
+      border-top:1.5px solid #263a51;
+      border-bottom:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-group-gap td {
+      height:34px;
+      padding:0;
+      border-top:0;
+      border-bottom:1.5px solid #263a51;
+      background:#ffffff;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-gap td {
+      height:30px;
+      padding:0;
+      border-top:0;
+      border-bottom:0;
+      background:#ffffff;
+    }
+
+    /* v23: bingkai jadual, garis heading dan gap sebelum jumlah keseluruhan */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th {
+      border-top:1.5px solid #263a51;
+      border-bottom:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) tbody tr > td:first-child {
+      border-left:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) thead th:last-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) tbody tr > td:last-child {
+      border-right:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-total-gap td {
+      height:34px;
+      padding:0;
+      border-top:0;
+      border-bottom:0;
+      background:#ffffff;
+    }
+    /* v24: sambungkan garis vertikal pada gap terakhir sebelum JUMLAH */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-total-gap > td:first-child,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-total-gap > td:nth-last-child(2) {
+      border-right:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .total-row td {
+      background:#eaf2fb;
+      font-weight:900;
+      border-top:1.5px solid #bfd1e4;
+      border-bottom:1.5px solid #263a51;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .negative { color:var(--red); }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) td.percent-red { background-color:#f8d7da; color:#111827; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) td.percent-yellow { background-color:#fff3cd; color:#111827; }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) td.percent-green { background-color:#d1e7dd; color:#111827; }
+    .bom-edit-trigger {
+      appearance:none;
+      border:0;
+      background:transparent;
+      padding:0;
+      margin:0;
+      width:100%;
+      color:#263a51;
+      font:inherit;
+      font-weight:850;
+      line-height:1.35;
+      text-align:left;
+      cursor:text;
+      display:flex;
+      align-items:flex-start;
+      gap:7px;
+    }
+    .bom-edit-trigger:hover { color:var(--blue); }
+    .inline-cell-trigger {
+      appearance:none;
+      border:0;
+      background:transparent;
+      color:inherit;
+      font:inherit;
+      width:100%;
+      min-height:24px;
+      padding:2px 3px;
+      cursor:text;
+      border-radius:6px;
+      text-align:inherit;
+    }
+    .inline-cell-trigger:hover { background:#eef5ff; color:#174f9e; }
+    .inline-cell-input {
+      width:100%;
+      min-width:70px;
+      border:1px solid #8fb5ee;
+      border-radius:7px;
+      background:#fff;
+      color:#263a51;
+      padding:6px 7px;
+      outline:none;
+      font:inherit;
+      box-shadow:0 0 0 3px rgba(30,103,214,.08);
+    }
+    .detail-inline-input { min-width:260px; }
+    .bom-inline-input {
+      width:100%;
+      min-height:38px;
+      border:1px solid #8fb5ee;
+      border-radius:9px;
+      background:#fff;
+      color:#263a51;
+      padding:8px 9px;
+      outline:none;
+      font:inherit;
+      font-weight:800;
+      box-shadow:0 0 0 3px rgba(30,103,214,.08);
+    }
+
+
+
+    /* v29: freeze heading jadual BOM + scrollbar mendatar kekal di bawah skrin */
+    .excel-sticky-head {
+      position:fixed;
+      display:none;
+      overflow:hidden;
+      background:#ffffff;
+      z-index:39;
+      box-shadow:0 7px 18px rgba(24,46,75,.14);
+      pointer-events:none;
+    }
+    .excel-sticky-head.show { display:block; }
+    .excel-sticky-table {
+      border-collapse:separate;
+      border-spacing:0;
+      table-layout:fixed;
+      min-width:0 !important;
+      margin:0;
+      background:#ffffff;
+    }
+    .excel-sticky-table thead th {
+      box-sizing:border-box;
+      text-align:center;
+      vertical-align:middle;
+      background:#d9e8f7;
+      color:#4e6f93;
+      font-size:10px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      white-space:normal;
+      line-height:1.2;
+      padding:11px 8px;
+      border-top:1.5px solid #263a51;
+      border-bottom:1.5px solid #263a51;
+      position:static;
+    }
+    .excel-sticky-table thead th:first-child { border-left:1.5px solid #263a51; }
+    .excel-sticky-table thead th:last-child { border-right:1.5px solid #263a51; }
+    .excel-sticky-table thead th:nth-child(6),
+    .excel-sticky-table thead th:nth-child(19) { border-right:1.5px solid #263a51; }
+
+    .excel-fixed-hscroll {
+      position:fixed;
+      left:0;
+      bottom:0;
+      display:none;
+      height:16px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      z-index:58;
+      background:transparent;
+      border:0;
+      border-radius:0;
+      box-shadow:none;
+      scrollbar-gutter:auto;
+    }
+    .excel-fixed-hscroll.show { display:block; }
+    .excel-fixed-hscroll-inner { height:1px; }
+
+    /* Gaya seperti Excel: scrollbar utama sentiasa di bawah viewport;
+       scrollbar asal jadual disorok tetapi scrollLeft masih berfungsi. */
+    #expenseView .excel-summary-card .table-scroll {
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+    }
+    #expenseView .excel-summary-card .table-scroll::-webkit-scrollbar {
+      height:0;
+    }
+
+    /* v30: Menu Laporan menggunakan pengalaman skrol yang sama seperti menu Perbelanjaan. */
+    #reportView .report-summary-card .table-scroll {
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+    }
+    #reportView .report-summary-card .table-scroll::-webkit-scrollbar {
+      height:0;
+    }
+
+    @media print {
+      .excel-sticky-head,
+      .excel-fixed-hscroll { display:none !important; }
+    }
+
+    /* v25: salinan jadual BOM di menu Laporan - paparan sahaja */
+    #reportExcelSummaryTable .report-readonly-bom {
+      display:block;
+      width:100%;
+      color:#263a51;
+      font-weight:850;
+      line-height:1.35;
+      text-align:left;
+    }
+    #reportExcelSummaryTable .report-readonly-text {
+      display:block;
+      width:100%;
+      min-height:24px;
+      padding:2px 3px;
+      color:inherit;
+      font:inherit;
+      text-align:inherit;
+    }
+    #reportExcelSummaryTable button,
+    #reportExcelSummaryTable input {
+      pointer-events:none;
+    }
+    #reportView .report-summary-card { margin-bottom:15px; }
+
+    /* v26: cetakan PDF berwarna, tanpa header/footer pelayar, nombor muka surat di tengah */
+    @media print {
+      html, body {
+        background:#ffffff !important;
+        margin:0 !important;
+        padding:0 !important;
+      }
+      #reportView,
+      #reportView * {
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+        color-adjust:exact !important;
+      }
+      #reportView {
+        display:block !important;
+        padding:0 !important;
+      }
+      #reportView .section-head { display:none !important; }
+      #reportView .report-grid { margin-bottom:10px; }
+      #reportView .report-summary-card { border:0; border-radius:0; }
+      #reportView .report-summary-card .table-toolbar { padding:6px 0 7px; }
+      #reportView .report-summary-card .table-scroll { padding:0; overflow:visible; }
+      #reportExcelSummaryTable {
+        min-width:0 !important;
+        width:100% !important;
+        table-layout:fixed !important;
+        border-radius:0 !important;
+        background:#ffffff !important;
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+      }
+      /* Kekalkan warna tepat seperti jadual Perbelanjaan Mengikut BOM Paper */
+      #reportExcelSummaryTable thead th {
+        background:#d9e8f7 !important;
+        color:#4e6f93 !important;
+      }
+      #reportExcelSummaryTable .excel-bom-row td { background:#ffffff !important; }
+      #reportExcelSummaryTable .excel-program-row td { background:#f8fbff !important; }
+      #reportExcelSummaryTable .excel-detail-row td { background:#ffffff !important; }
+      #reportExcelSummaryTable .excel-subtotal-row td { background:#f5f9fc !important; }
+      #reportExcelSummaryTable .total-row td { background:#eaf2fb !important; }
+      #reportExcelSummaryTable td.percent-red { background:#f8d7da !important; color:#111827 !important; }
+      #reportExcelSummaryTable td.percent-yellow { background:#fff3cd !important; color:#111827 !important; }
+      #reportExcelSummaryTable td.percent-green { background:#d1e7dd !important; color:#111827 !important; }
+      #reportExcelSummaryTable th,
+      #reportExcelSummaryTable td {
+        min-width:0 !important;
+        width:auto !important;
+        padding:3px 2px !important;
+        font-size:6.4px !important;
+        line-height:1.15 !important;
+        overflow-wrap:anywhere;
+      }
+      #reportExcelSummaryTable th:nth-child(1) { width:2.6% !important; }
+      #reportExcelSummaryTable th:nth-child(2) { width:15.5% !important; }
+      #reportExcelSummaryTable th:nth-child(3),
+      #reportExcelSummaryTable th:nth-child(4),
+      #reportExcelSummaryTable th:nth-child(5),
+      #reportExcelSummaryTable th:nth-child(6) { width:5.3% !important; }
+      #reportExcelSummaryTable th:nth-child(7) { width:16.5% !important; }
+      #reportExcelSummaryTable th:nth-child(n+8):nth-child(-n+19) { width:3.3% !important; }
+      #reportExcelSummaryTable th:nth-child(20) { width:5.2% !important; }
+      #reportView .report-meta { margin-top:8px; }
+    }
+
+    @page {
+      size:A4 landscape;
+      margin:8mm 8mm 12mm;
+      @top-left { content:none; }
+      @top-center { content:none; }
+      @top-right { content:none; }
+      @bottom-left { content:none; }
+      @bottom-center {
+        content:"Muka surat " counter(page);
+        font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size:8pt;
+        color:#53657a;
+      }
+      @bottom-right { content:none; }
+    }
+
+  
+
+    /* v30: Warna baris program hanya dari Perincian Perbelanjaan hingga Jumlah */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-row > td:first-child {
+      background:#ffffff;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-program-row > td:not(:first-child) {
+      background:#f8fbff;
+    }
+
+    /* v32: Besarkan angka jumlah perbelanjaan bulanan (contoh 9,305.00 / 1,000.00) */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row td.center-data {
+      font-size:14px;
+      font-weight:850;
+      line-height:1.35;
+    }
+
+    /* v31: Baris jumlah belanja bulanan - Bil hingga Baki putih, Perincian hingga Jumlah biru muda */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row > td:first-child {
+      background:#ffffff;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .excel-subtotal-row > td:not(:first-child) {
+      background:#f5f9fc;
+    }
+
+    /* Kekalkan format sama semasa cetakan Laporan */
+    @media print {
+      #reportExcelSummaryTable .excel-subtotal-row > td:first-child {
+        background:#ffffff !important;
+      }
+      #reportExcelSummaryTable .excel-subtotal-row > td:not(:first-child) {
+        background:#f5f9fc !important;
+      }
+      #reportExcelSummaryTable .excel-program-row > td:first-child {
+        background:#ffffff !important;
+      }
+      #reportExcelSummaryTable .excel-program-row > td:not(:first-child) {
+        background:#f8fbff !important;
+      }
+      #reportExcelSummaryTable .total-row td {
+        background:#eaf2fb !important;
+      }
+    }
+
+
+
+    /* v33: Besarkan tulisan pada row jumlah keseluruhan paling bawah */
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .total-row td {
+      font-size:15px;
+      line-height:1.35;
+    }
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .total-row .detail-cell,
+    :is(#excelSummaryTable, #reportExcelSummaryTable) .total-row td.center-data {
+      font-size:15px;
+      font-weight:900;
+    }
+
+    /* v34: Dashboard summary only. Existing report/expense styles stay unchanged. */
+    #dashboardSummaryCard {
+      --s-blue:#2369d8; --s-ink:#19334d; --s-muted:#64788f; --s-line:#e6edf4;
+      --s-red:#b93952; --s-amber:#99610b; --s-green:#087e68;
+      border:1px solid #dfe8f1; border-radius:20px; background:#fff;
+      box-shadow:0 8px 28px rgba(26,53,83,.055); overflow:hidden;
+      scroll-margin-top:104px;
+    }
+    #dashboardSummaryCard [hidden] { display:none !important; }
+    #dashboardSummaryCard svg { width:17px; height:17px; flex-shrink:0; }
+    #dashboardSummaryCard button { -webkit-tap-highlight-color:transparent; }
+    #dashboardSummaryCard :is(button,input):focus-visible { outline:3px solid #82b2f5; outline-offset:3px; }
+    .summary-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    #dashboardSummaryCard .summary-heading {
+      display:flex; align-items:center; justify-content:space-between; gap:20px;
+      padding:24px 24px 21px; background:linear-gradient(115deg,#f8fbff 0%,#ffffff 68%);
+    }
+    #dashboardSummaryCard .summary-title-wrap { display:flex; align-items:center; gap:13px; min-width:0; }
+    #dashboardSummaryCard .summary-title-icon { width:44px; height:44px; display:grid; place-items:center; border:1px solid #dbe8fb; border-radius:13px; background:#ebf3ff; color:var(--s-blue); flex-shrink:0; }
+    #dashboardSummaryCard .summary-title-icon svg { width:23px; height:23px; }
+    #dashboardSummaryCard .summary-eyebrow { font-size:10px; font-weight:800; color:#657f9c; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:5px; }
+    #dashboardSummaryCard h3 { font-size:19px; line-height:1.3; letter-spacing:-.025em; color:var(--s-ink); margin:0; font-weight:800; }
+    #dashboardSummaryCard .summary-heading p { font-size:11.5px; line-height:1.5; color:var(--s-muted); margin:5px 0 0; }
+    #dashboardSummaryCard .summary-head-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    #dashboardSummaryCard .summary-btn { border:1px solid #dce5ee; border-radius:9px; padding:9px 11px; background:#fff; color:#435d76; font-size:11px; line-height:1.4; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; white-space:nowrap; transition:background .16s,border-color .16s,color .16s; }
+    #dashboardSummaryCard .summary-btn:hover { background:#f1f6fd; border-color:#bacee8; color:#205baf; }
+    #dashboardSummaryCard .summary-btn[aria-pressed="true"] { background:#eaf2ff; color:#1d5bb8; border-color:#bbd4f8; }
+    #dashboardSummaryCard .summary-btn:disabled { opacity:.4; cursor:not-allowed; }
+    #dashboardSummaryCard .summary-btn.subtle { border-color:transparent; background:transparent; color:#687d93; }
+    #dashboardSummaryCard .summary-btn.subtle:hover { color:#1e67d6; background:#eff5ff; }
+    #dashboardSummaryCard .summary-controls { padding:0 24px 15px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    #dashboardSummaryCard .summary-search { position:relative; flex:1 1 320px; max-width:480px; }
+    #dashboardSummaryCard .summary-search > svg { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:#788ca2; pointer-events:none; }
+    #dashboardSummaryCard .summary-search input { width:100%; height:40px; background:#f7f9fc; border:1px solid #e2eaf2; border-radius:10px; padding:10px 38px 10px 39px; color:#25435e; font-size:12px; transition:.16s; }
+    #dashboardSummaryCard .summary-search input::placeholder { color:#7b8ca1; opacity:1; }
+    #dashboardSummaryCard .summary-search input:focus { background:#fff; border-color:#8fb5ee; outline:0; box-shadow:0 0 0 3px #eaf2fe; }
+    #dashboardSummaryCard .summary-control-actions { display:flex; align-items:center; gap:7px; }
+    #dashboardSummaryCard .summary-filters { border-top:1px solid #f0f4f8; border-bottom:1px solid var(--s-line); padding:12px 24px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    #dashboardSummaryCard .summary-filter-label { font-size:10px; font-weight:800; color:#6b7e92; margin-right:2px; }
+    #dashboardSummaryCard .summary-filter-options { display:flex; gap:6px; flex-wrap:wrap; }
+    #dashboardSummaryCard .summary-filter { display:inline-flex; align-items:center; gap:7px; border:1px solid transparent; border-radius:8px; background:transparent; color:#546a80; font-size:11px; padding:7px 10px; font-weight:650; min-height:34px; transition:.16s; white-space:nowrap; }
+    #dashboardSummaryCard .summary-filter:hover { background:#f3f7fc; }
+    #dashboardSummaryCard .summary-filter[aria-pressed="true"] { border-color:#c6daf9; background:#edf4ff; color:#245dae; box-shadow:0 2px 5px #143b7010; }
+    #dashboardSummaryCard .summary-filter-count { display:inline-grid; place-items:center; min-width:20px; height:19px; border-radius:5px; background:#edf1f6; color:#6a7d94; font-size:10px; font-weight:800; padding:0 4px; }
+    #dashboardSummaryCard .summary-filter[aria-pressed="true"] .summary-filter-count { background:#dbeaff; color:#245dae; }
+    #dashboardSummaryCard .summary-dot { width:6px; height:6px; flex:0 0 6px; border-radius:50%; background:currentColor; }
+    #dashboardSummaryCard .summary-filter[data-summary-filter="low"] .summary-dot { background:#d0576b; }
+    #dashboardSummaryCard .summary-filter[data-summary-filter="mid"] .summary-dot { background:#d09b32; }
+    #dashboardSummaryCard .summary-filter[data-summary-filter="high"] .summary-dot { background:#23a087; }
+    #dashboardSummaryCard .summary-filter[data-summary-filter="over"] .summary-dot { background:#a63753; }
+    #dashboardSummaryCard .summary-mobile-hint { display:none; }
+    #dashboardSummaryCard .summary-scroll { overflow:auto; max-height:720px; scrollbar-width:thin; scrollbar-color:#bacbdc #f2f6fa; overscroll-behavior-x:contain; }
+    #dashboardSummaryCard .summary-scroll::-webkit-scrollbar { width:8px; height:8px; }
+    #dashboardSummaryCard .summary-scroll::-webkit-scrollbar-thumb { border:2px solid #f2f6fa; border-radius:8px; background:#bacbdc; }
+    #dashboardSummaryTable { min-width:920px; width:100%; table-layout:fixed; border-collapse:separate; border-spacing:0; margin:0; border:0; }
+    #dashboardSummaryTable > colgroup > col:nth-child(1) { width:5%; }
+    #dashboardSummaryTable > colgroup > col:nth-child(2) { width:39%; }
+    #dashboardSummaryTable > colgroup > col:nth-child(3) { width:14%; }
+    #dashboardSummaryTable > colgroup > col:nth-child(4) { width:14%; }
+    #dashboardSummaryTable > colgroup > col:nth-child(5) { width:14%; }
+    #dashboardSummaryTable > colgroup > col:nth-child(6) { width:14%; }
+    #dashboardSummaryTable > thead > tr > th { position:sticky; top:0; z-index:3; padding:0; height:60px; background:#f3f7fc; border-bottom:1px solid #dce6f0; color:#5a728c; vertical-align:middle; white-space:normal; font-size:10px; letter-spacing:.035em; font-weight:750; }
+    #dashboardSummaryTable .summary-sort { width:100%; height:60px; border:0; padding:12px 15px; display:flex; align-items:center; justify-content:space-between; gap:5px; background:transparent; color:inherit; text-align:left; font:inherit; text-transform:uppercase; letter-spacing:inherit; line-height:1.4; }
+    #dashboardSummaryTable .summary-sort.money-sort { justify-content:flex-end; text-align:right; }
+    #dashboardSummaryTable .summary-sort.center-sort { justify-content:center; text-align:center; }
+    #dashboardSummaryTable .summary-sort small { display:block; font-size:9px; opacity:.8; font-weight:600; line-height:1.5; letter-spacing:.04em; }
+    #dashboardSummaryTable .summary-sort svg { width:12px; height:14px; opacity:.45; }
+    #dashboardSummaryTable .summary-sort:hover { color:#2359aa; background:#e9f1fb; }
+    #dashboardSummaryTable th[aria-sort="ascending"] .summary-sort,
+    #dashboardSummaryTable th[aria-sort="descending"] .summary-sort { color:#2159ac; background:#eaf2fe; }
+    #dashboardSummaryTable th[aria-sort="ascending"] .summary-sort svg,
+    #dashboardSummaryTable th[aria-sort="descending"] .summary-sort svg { opacity:1; }
+    #dashboardSummaryTable th[aria-sort="ascending"] .sort-down,
+    #dashboardSummaryTable th[aria-sort="descending"] .sort-up { opacity:.16; }
+    #dashboardSummaryTable > thead > tr > th:first-child { text-align:center; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td { padding:12px 15px; border-bottom:1px solid #edf2f7; vertical-align:middle; color:#314b65; font-size:13px; line-height:1.4; background:#fff; transition:background .16s; }
+    #dashboardSummaryTable > tbody > tr.summary-row:nth-child(4n+3) > td { background:#fcfdff; }
+    #dashboardSummaryTable > tbody > tr.summary-row:hover > td { background:#f5f9ff; }
+    #dashboardSummaryTable > tbody > tr.summary-row.is-open > td { background:#f0f6ff; border-bottom-color:#e0ebfb; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td:first-child { text-align:center; padding-left:10px; padding-right:6px; }
+    #dashboardSummaryCard .summary-index { display:inline-grid; place-items:center; width:28px; height:28px; border-radius:8px; background:#f0f4f8; color:#6b8096; font-size:10px; font-weight:750; font-variant-numeric:tabular-nums; }
+    #dashboardSummaryTable > tbody > tr.summary-row.is-open .summary-index { background:#dceaff; color:#2566be; }
+    #dashboardSummaryCard .summary-bom-button { display:flex; align-items:flex-start; gap:10px; text-align:left; width:100%; background:transparent; border:0; border-radius:6px; padding:0; color:#23405d; }
+    #dashboardSummaryCard .summary-bom-copy { flex:1; min-width:0; }
+    #dashboardSummaryCard .summary-bom-name { display:block; font-size:12px; line-height:1.5; font-weight:750; overflow-wrap:anywhere; }
+    #dashboardSummaryCard .summary-bom-meta { display:flex; align-items:center; gap:7px; margin-top:5px; font-size:10px; font-weight:500; color:#75879a; }
+    #dashboardSummaryCard .summary-bom-hint { color:#6083b2; }
+    #dashboardSummaryCard .summary-bom-button > svg { width:16px; height:16px; margin-top:2px; color:#7b94ad; transition:transform .18s; }
+    #dashboardSummaryCard .summary-bom-button[aria-expanded="true"] > svg { transform:rotate(90deg); color:#2d6bca; }
+    #dashboardSummaryCard .summary-bom-button:hover .summary-bom-name { color:#2467c5; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td.summary-money { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; letter-spacing:-.015em; font-weight:550; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td.summary-spent { color:#255eaa; font-weight:800; }
+    #dashboardSummaryCard .summary-balance { display:inline-flex; justify-content:flex-end; background:#edf7f4; color:#197361; padding:6px 8px; border-radius:7px; font-weight:800; min-width:90px; font-size:12px; }
+    #dashboardSummaryCard .summary-balance.negative { background:#fff0f3; color:#b1374d; }
+    #dashboardSummaryCard .summary-balance.zero { background:#f0f3f7; color:#6e8296; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td.summary-percent { padding-left:20px; padding-right:20px; }
+    #dashboardSummaryCard .summary-progress { --progress-color:#d0a249; --progress-soft:#fff6e4; max-width:140px; margin:auto; }
+    #dashboardSummaryCard .summary-progress.is-low, #dashboardSummaryCard .summary-progress.is-over { --progress-color:#cf6478; --progress-soft:#fdf0f3; }
+    #dashboardSummaryCard .summary-progress.is-mid { --progress-color:#d2a246; --progress-soft:#fff7e5; }
+    #dashboardSummaryCard .summary-progress.is-high { --progress-color:#2fa58b; --progress-soft:#eaf7f2; }
+    #dashboardSummaryCard .summary-progress.is-none { --progress-color:#9aaaba; --progress-soft:#f0f3f7; }
+    #dashboardSummaryCard .summary-progress-top { display:flex; align-items:center; justify-content:flex-end; margin-bottom:7px; }
+    #dashboardSummaryCard .summary-percent-tag { display:inline-flex; align-items:center; gap:5px; border-radius:5px; padding:3px 6px; background:var(--progress-soft); color:#895e13; font-size:11px; font-weight:750; font-variant-numeric:tabular-nums; }
+    #dashboardSummaryCard .is-low .summary-percent-tag, #dashboardSummaryCard .is-over .summary-percent-tag { color:#ad3e55; }
+    #dashboardSummaryCard .is-high .summary-percent-tag { color:#14846e; }
+    #dashboardSummaryCard .is-none .summary-percent-tag { color:#6f7e91; }
+    #dashboardSummaryCard .summary-progress-track { height:5px; border-radius:9px; background:#eaf0f5; overflow:hidden; }
+    #dashboardSummaryCard .summary-progress-fill { display:block; height:100%; border-radius:9px; background:var(--progress-color); transition:width .35s ease; }
+    #dashboardSummaryTable > tfoot > tr > td { position:sticky; bottom:0; z-index:2; padding:19px 15px; vertical-align:middle; background:#143651; color:#fff; border-bottom:0; text-align:right; font-variant-numeric:tabular-nums; font-size:18px; font-weight:800; white-space:nowrap; letter-spacing:-.025em; }
+    #dashboardSummaryTable > tfoot > tr > td:first-child { text-align:left; padding-left:24px; }
+    #dashboardSummaryCard .summary-total-label { font-size:10px; letter-spacing:.085em; font-weight:800; }
+    #dashboardSummaryCard .summary-total-caption { display:block; font-size:10px; font-weight:400; color:#b9cede; margin-top:6px; letter-spacing:0; }
+    #dashboardSummaryTable > tfoot > tr > td.summary-total-pct { color:#c2dcf8; text-align:center; font-size:16px; }
+    #dashboardSummaryTable > tfoot > tr > td.summary-total-balance { color:#a8e5d5; }
+    #dashboardSummaryTable > tfoot > tr > td.summary-total-balance.negative { color:#ffbdcb; }
+    #dashboardSummaryCard .summary-footer { padding:14px 24px; display:flex; gap:10px; align-items:center; justify-content:space-between; color:#75869a; font-size:10px; line-height:1.6; }
+    #dashboardSummaryCard .summary-result-info { display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+    #dashboardSummaryCard .summary-result-info strong { font-weight:750; color:#47637f; }
+    #dashboardSummaryCard .summary-filter-note { color:#2865b8; }
+    #dashboardSummaryCard .summary-empty { padding:38px 24px; text-align:center; background:#fff; }
+    #dashboardSummaryCard .summary-empty-icon { width:45px; height:45px; margin:0 auto 12px; display:grid; place-items:center; border-radius:14px; background:#f0f5fb; color:#8198b0; }
+    #dashboardSummaryCard .summary-empty-icon svg { width:22px; height:22px; }
+    #dashboardSummaryCard .summary-empty strong { color:#36526e; font-size:14px; }
+    #dashboardSummaryCard .summary-empty p { color:#7c8fa3; font-size:12px; margin:6px 0 14px; }
+    #dashboardSummaryTable > tbody > tr.summary-detail > td { padding:0; border:0; background:#f3f7fd; }
+    #dashboardSummaryCard .summary-detail-panel { padding:18px 24px 22px; border-bottom:1px solid #dee8f3; border-left:3px solid #709deb; }
+    #dashboardSummaryCard .summary-detail-top { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:13px; }
+    #dashboardSummaryCard .summary-detail-title { font-size:12px; color:#2f5278; font-weight:800; display:block; }
+    #dashboardSummaryCard .summary-detail-subtitle { display:block; font-size:10px; color:#798ba0; margin-top:4px; }
+    #dashboardSummaryCard .summary-detail-table { width:100%; min-width:0; table-layout:fixed; border:1px solid #e2ebf5; border-spacing:0; border-collapse:separate; border-radius:10px; overflow:hidden; background:#fff; }
+    #dashboardSummaryCard .summary-detail-table th { position:static; padding:10px 13px; background:#eaf1fa; border-bottom:1px solid #e0e9f4; font-size:9px; color:#657d95; letter-spacing:.05em; font-weight:750; }
+    #dashboardSummaryCard .summary-detail-table td { padding:10px 13px; font-size:11px; line-height:1.5; border-bottom:1px solid #edf2f8; color:#4a647d; background:#fff; word-wrap:break-word; vertical-align:top; }
+    #dashboardSummaryCard .summary-detail-table th:first-child { width:12%; }
+    #dashboardSummaryCard .summary-detail-table th:nth-child(2) { width:39%; }
+    #dashboardSummaryCard .summary-detail-table th:nth-child(3) { width:31%; }
+    #dashboardSummaryCard .summary-detail-table th:last-child { width:18%; text-align:right; }
+    #dashboardSummaryCard .summary-detail-table td:last-child { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; color:#365f8b; }
+    #dashboardSummaryCard .summary-detail-table tr:last-child td { border-bottom:0; }
+    #dashboardSummaryCard .summary-month { color:#305d91; background:#f0f5fc; border-radius:5px; padding:4px 6px; font-size:10px; font-weight:650; display:inline-block; }
+    #dashboardSummaryCard .summary-detail-total { margin:12px 0 0; text-align:right; font-size:11px; color:#7389a0; }
+    #dashboardSummaryCard .summary-detail-total strong { font-size:13px; color:#2d577f; margin-left:12px; }
+    #dashboardSummaryCard .summary-detail-empty { padding:20px; text-align:center; border:1px dashed #cfdded; color:#768ca3; border-radius:9px; font-size:12px; }
+    #dashboardSummaryCard.is-compact .summary-row > td { padding-top:10px; padding-bottom:10px; }
+    #dashboardSummaryCard.is-compact .summary-bom-meta { display:none; }
+    #dashboardSummaryCard.is-compact .summary-progress-top { margin-bottom:5px; }
+    #dashboardSummaryCard .summary-year { font-variant-numeric:tabular-nums; color:#2d65ac; }
+    body.summary-focus-mode .sidebar { display:none; }
+    body.summary-focus-mode .main { margin-left:0; }
+    body.summary-focus-mode #dashboardView > .kpi-grid,
+    body.summary-focus-mode #dashboardView > .panel-grid { display:none; }
+    body.summary-focus-mode #dashboardSummaryCard .summary-scroll { max-height:calc(100vh - 420px); min-height:240px; }
+    body.summary-focus-mode #menuBtn { display:none; }
+    @media (max-width:1180px) {
+      #dashboardSummaryCard .summary-heading { align-items:flex-start; padding:20px; gap:12px; }
+      #dashboardSummaryCard .summary-title-icon { width:38px; height:38px; border-radius:11px; }
+      #dashboardSummaryCard h3 { font-size:17px; }
+      #dashboardSummaryCard .summary-head-actions .summary-btn { padding:9px; }
+      #dashboardSummaryCard .summary-head-actions .summary-action-text { display:none; }
+      #dashboardSummaryCard .summary-controls { padding:0 20px 14px; }
+      #dashboardSummaryCard .summary-filters { padding:10px 20px; gap:7px; }
+      #dashboardSummaryCard .summary-filter { padding:6px 8px; }
+      #dashboardSummaryCard .summary-footer { padding:12px 20px; flex-wrap:wrap; }
+    }
+    @media (max-width:820px) {
+      #dashboardSummaryCard { scroll-margin-top:94px; }
+      #dashboardSummaryCard .summary-heading { padding:18px 16px; }
+      #dashboardSummaryCard .summary-controls { padding:0 16px 14px; gap:10px; flex-wrap:wrap; }
+      #dashboardSummaryCard .summary-search { max-width:none; flex-basis:100%; }
+      #dashboardSummaryCard .summary-control-actions { justify-content:flex-end; width:100%; }
+      #dashboardSummaryCard .summary-filters { padding:11px 16px; gap:8px; }
+      #dashboardSummaryCard .summary-filter-label { width:100%; }
+      #dashboardSummaryCard .summary-footer { padding:12px 16px; }
+      #dashboardSummaryCard .summary-mobile-hint { display:flex; align-items:center; gap:7px; font-size:10px; color:#6381a0; padding:9px 16px; background:#f9fbfe; border-bottom:1px solid #e6edf4; }
+      #dashboardSummaryCard .summary-scroll { max-height:650px; }
+      #dashboardSummaryTable > thead > tr > th:first-child,
+      #dashboardSummaryTable > tbody > tr.summary-row > td:first-child { position:sticky; left:0; z-index:1; }
+      #dashboardSummaryTable > thead > tr > th:first-child { z-index:4; background:#f3f7fc; }
+      #dashboardSummaryTable > tbody > tr.summary-row > td:first-child { box-shadow:3px 0 5px #19334d06; }
+      body.summary-focus-mode #dashboardSummaryCard .summary-scroll { max-height:65vh; }
+      .title-wrap { flex:1; }
+      .title-text h1 { white-space:normal; font-size:16px; overflow-wrap:break-word; }
+      .year-control { flex-shrink:0; }
+    }
+    @media (max-width:560px) {
+      #dashboardSummaryCard .summary-title-icon { display:none; }
+      #dashboardSummaryCard h3 { font-size:16px; line-height:1.4; }
+      #dashboardSummaryCard .summary-heading p { font-size:10px; }
+      #dashboardSummaryCard .summary-eyebrow { font-size:9px; }
+      #dashboardSummaryCard .summary-head-actions { gap:5px; }
+      #dashboardSummaryCard .summary-head-actions .summary-btn { padding:8px; }
+      #dashboardSummaryCard .summary-filter-options { flex-wrap:nowrap; overflow-x:auto; width:100%; padding-bottom:4px; }
+      #dashboardSummaryCard .summary-control-actions { justify-content:space-between; }
+      #dashboardSummaryCard .summary-control-actions .summary-btn { font-size:10px; padding:8px; }
+      .title-text h1 { font-size:14px; white-space:normal; }
+      .topbar { gap:10px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      #dashboardSummaryCard *, #dashboardSummaryCard *::before, #dashboardSummaryCard *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+    }
+
+
+    /* Kemas kini ringkasan: susun atur ringkas dan angka berpusat */
+    #dashboardSummaryCard .summary-head-actions,
+    #dashboardSummaryCard .summary-control-actions,
+    #dashboardSummaryCard .summary-filter-label,
+    #dashboardSummaryCard .summary-filter[data-summary-filter="over"],
+    #dashboardSummaryCard .summary-bom-meta,
+    #dashboardSummaryCard .summary-footer { display:none !important; }
+    #dashboardSummaryCard .summary-heading { padding-top:19px; padding-bottom:17px; }
+    #dashboardSummaryCard .summary-controls { padding-top:0; padding-bottom:14px; }
+    #dashboardSummaryCard .summary-balance,
+    #dashboardSummaryCard .summary-balance.negative,
+    #dashboardSummaryCard .summary-balance.zero { background:transparent; padding:0; min-width:0; justify-content:center; }
+    #dashboardSummaryTable > thead > tr > th:nth-child(n+3) .summary-sort { justify-content:center; text-align:center; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td.summary-money,
+    #dashboardSummaryTable > tbody > tr.summary-row > td.summary-percent { text-align:center; }
+    #dashboardSummaryTable > tbody > tr.summary-row > td.summary-money { white-space:nowrap; }
+    #dashboardSummaryCard .summary-progress { margin:0 auto; }
+    #dashboardSummaryCard .summary-progress-top { justify-content:center; }
+    #dashboardSummaryTable > tfoot > tr > td { text-align:center; padding:12px 10px; font-size:15px; }
+    #dashboardSummaryTable > tfoot > tr > td:first-child { padding-left:16px; }
+    #dashboardSummaryCard .summary-total-label { font-size:10px; }
+    #dashboardSummaryTable .summary-sort small { margin-top:4px; }
+
+
+    /* v37: Gelapkan latar heading jadual Ringkasan sahaja. */
+    #dashboardSummaryTable > thead > tr > th,
+    #dashboardSummaryTable > thead > tr > th:first-child {
+      background: #ccdded;
+      color: #294d70;
+      border-bottom-color: #acc4dc;
+    }
+
+    /* v36: Jadual Ringkasan berbingkai sendiri, berjarak dari kotak luar. */
+    #dashboardSummaryCard .summary-scroll {
+      margin: 6px 20px 20px;
+      border: 2px solid #c6d7e9;
+      border-radius: 19px;
+      overflow: auto;
+      max-height: 720px;
+      background: #fff;
+    }
+    #dashboardSummaryTable { border-radius: 17px; overflow: hidden; }
+    #dashboardSummaryCard .summary-bom-button { gap: 0; }
+    #dashboardSummaryCard .summary-bom-button > svg { display: none !important; }
+    @media (max-width: 820px) {
+      #dashboardSummaryCard .summary-scroll { margin: 6px 12px 14px; max-height: 650px; }
+    }
+
+
+/* Senarai Program: selaras dengan jadual Ringkasan Dashboard */
+#programTableCard {border:1px solid #dfe8f1;border-radius:20px;box-shadow:0 8px 28px rgba(26,53,83,.055)}
+#programTableCard .table-toolbar {background:linear-gradient(115deg,#f8fbff,#fff 68%);padding:20px 24px}
+#programTableCard .table-toolbar h3 {color:#19334d;font-size:17px}
+#programTableCard .table-scroll {margin:6px 20px 20px;border:2px solid #c6d7e9;border-radius:19px;overflow:auto}
+#programListTable {width:100%;min-width:720px;table-layout:fixed;border-collapse:separate;border-spacing:0}
+#programListTable thead th {position:sticky;top:0;background:#ccdded;color:#294d70;border-bottom:1px solid #acc4dc;padding:17px 15px;font-size:10px;letter-spacing:.035em;font-weight:800;text-align:center}
+#programListTable thead th:nth-child(2) {text-align:left}
+#programListTable tbody td {padding:14px 15px;vertical-align:middle;font-size:12px;color:#314b65;border-bottom:1px solid #edf2f7}
+#programListTable tbody tr:nth-child(even) td {background:#fcfdff}
+#programListTable tbody tr:hover td {background:#f5f9ff}
+#programListTable tbody td:first-child,#programListTable tbody td:nth-child(3),#programListTable tbody td:nth-child(4) {text-align:center}
+#programListTable tbody tr:last-child td {border-bottom:0}
+#programListTable .summary-index {display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#f0f4f8;color:#6b8096;font-size:10px;font-weight:750}
+#programListTable .program-name {font-weight:750;color:#23405d;overflow-wrap:anywhere}
+#programListTable .program-name-link {border:0;background:none;padding:5px 0;color:#234e81;text-align:left;font:inherit;font-weight:750;cursor:pointer;line-height:1.55;overflow-wrap:anywhere}
+#programListTable .program-name-link:hover {color:#1e67d6;text-decoration:underline;text-underline-offset:3px}
+#programListTable .program-name-link:focus-visible {outline:2px solid #82b2f5;outline-offset:3px;border-radius:3px}
+#programTableCard #programEmpty {padding:16px 18px 34px}
+@media(max-width:820px){#programTableCard .table-scroll{margin:6px 12px 14px}#programTableCard .table-toolbar{padding:17px}}
+@media print {#programView{display:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside aria-label="Navigasi utama" class="sidebar" id="sidebar">
+<div class="brand"><img alt="Logo Malaysia Productivity Corporation (MPC)" src="data:image/png;base64,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"/></div>
+
+
+<nav class="nav">
+<button class="nav-btn active" data-view="dashboard" type="button">
+<svg fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24"><rect height="7" rx="1.5" width="7" x="3" y="3"></rect><rect height="4" rx="1.5" width="7" x="14" y="3"></rect><rect height="10" rx="1.5" width="7" x="14" y="11"></rect><rect height="7" rx="1.5" width="7" x="3" y="14"></rect></svg>
+        Dashboard
+      </button>
+<button class="nav-btn" data-view="expense" type="button">
+<svg fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 7h16M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path><path d="M8 12h3m2 0h3M8 16h8"></path></svg>
+        Perbelanjaan
+      </button>
+<button class="nav-btn" data-view="report" type="button">
+<svg fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24"><path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path><path d="M14 3v6h6M9 13h6m-6 4h6"></path></svg>
+        Laporan
+      </button>
+<button class="nav-btn" data-view="program" type="button">
+<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-13 4h3m3 0h3"/></svg>
+        Program
+      </button>
+</nav>
+<div class="sidebar-foot">Dashboard pemantauan peruntukan dan perbelanjaan latihan HRMD MPC.</div>
+</aside>
+<div class="overlay" id="overlay"></div>
+<main class="main">
+<header class="topbar">
+<div class="title-wrap">
+<button aria-label="Buka menu" class="menu-btn" id="menuBtn" type="button">
+<svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+<div class="title-text"><h1 id="pageTitle">Dashboard Perbelanjaan Latihan Kompetensi Warga MPC</h1></div>
+</div>
+<div class="year-control"><label for="yearSelect">Tahun</label><select aria-label="Pilih tahun" id="yearSelect"></select></div>
+</header>
+<div class="content">
+<section class="view active" id="dashboardView">
+
+
+<div class="kpi-grid">
+<article class="kpi"><div class="kpi-icon" aria-label="Peruntukan diluluskan" title="Peruntukan diluluskan"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 7.5h14a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"></path><path d="M16 12h5v4h-5a2 2 0 0 1 0-4Z"></path><circle cx="17" cy="14" r=".7" fill="currentColor" stroke="none"></circle></svg></div><div class="value" id="kpiApproved">RM0.00</div><div class="meta"><span id="kpiBomCount">Peruntukan Diluluskan BOM</span></div></article>
+<article class="kpi teal"><div class="kpi-icon" aria-label="Jumlah Perbelanjaan" title="Jumlah Perbelanjaan"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path><path d="M9 8h6M9 12h6"></path></svg></div><div class="value" id="kpiSpent">RM0.00</div><div class="meta"><span>Jumlah Perbelanjaan</span></div></article>
+<article class="kpi gold" id="balanceCard"><div class="kpi-icon" aria-label="Baki peruntukan" title="Baki peruntukan"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M7 10h.01M17 14h.01"></path><circle cx="12" cy="12" r="2.5"></circle></svg></div><div class="value" id="kpiBalance">RM0.00</div><div class="meta"><span>Baki Peruntukan</span></div></article>
+<article class="kpi"><div class="kpi-icon" aria-label="Peratus perbelanjaan" title="Peratus perbelanjaan"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M19 5 5 19"></path><circle cx="7.5" cy="7.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg></div><div class="value" id="kpiUtil">0%</div><div class="meta"><span>% Perbelanjaan<small>%</small></span></div></article>
+</div>
+<div class="panel-grid single">
+<section class="panel">
+<div class="panel-header"><div><h3>Perbelanjaan Mengikut Bulan</h3></div><span class="badge" id="chartYearBadge">2026</span></div>
+<div class="panel-body"><div class="chart-wrap"><canvas aria-label="Carta perbelanjaan bulanan" id="expenseChart"></canvas><div class="chart-tooltip" id="chartTooltip"></div></div></div>
+</section>
+</div>
+<section class="table-card" id="dashboardSummaryCard" aria-labelledby="summaryTitle">
+  <div class="summary-heading">
+    <div class="summary-title-wrap">
+      <span class="summary-title-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h3m2 0h3M8 16h3m2 0h3"/></svg></span>
+      <div><span class="summary-year" id="summaryYear" hidden>2026</span><h3 id="summaryTitle">Ringkasan butiran perbelanjaan</h3></div>
+    </div>
+    <div class="summary-head-actions">
+      <button type="button" class="summary-btn" id="summaryExportBtn" aria-label="Eksport ringkasan yang dipaparkan sebagai CSV" title="Eksport ringkasan yang dipaparkan sebagai CSV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"/></svg><span class="summary-action-text">Eksport CSV</span></button>
+      <button type="button" class="summary-btn" id="summaryFocusBtn" aria-pressed="false" aria-label="Fokus jadual" title="Fokus jadual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><span class="summary-action-text" id="summaryFocusLabel">Fokus jadual</span></button>
+    </div>
+  </div>
+  <div class="summary-controls">
+    <div class="summary-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><label for="dashboardSearch" class="summary-sr-only">Cari BOM Paper, program atau butiran perbelanjaan</label><input id="dashboardSearch" placeholder="Cari BOM Paper, program atau butiran..." type="search" autocomplete="off"/></div>
+    <div class="summary-control-actions">
+      <button type="button" class="summary-btn subtle" id="summaryResetBtn" title="Kosongkan carian dan penapis; pulihkan susunan asal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg>Set semula</button>
+      <button type="button" class="summary-btn" id="summaryExpandAllBtn" aria-expanded="false" aria-controls="dashboardTableBody"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8 4-4 4 4M4 12h16m-12 4 4 4 4-4"/></svg><span id="summaryExpandLabel">Buka semua</span></button>
+      <button type="button" class="summary-btn" id="summaryDensityBtn" aria-pressed="false" title="Tukar antara paparan selesa dan padat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5h14M5 10h14M5 15h14M5 20h14"/></svg><span id="summaryDensityLabel">Padat</span></button>
+    </div>
+  </div>
+  <div class="summary-filters" role="group" aria-label="Tapis mengikut julat peratus perbelanjaan">
+    
+    <div class="summary-filter-options">
+      <button type="button" class="summary-filter" data-summary-filter="all" aria-pressed="true">Semua BOM <span class="summary-filter-count" data-summary-count="all">0</span></button>
+      <button type="button" class="summary-filter" data-summary-filter="low" aria-pressed="false"><span class="summary-dot" aria-hidden="true"></span>0&ndash;20% <span class="summary-filter-count" data-summary-count="low">0</span></button>
+      <button type="button" class="summary-filter" data-summary-filter="mid" aria-pressed="false"><span class="summary-dot" aria-hidden="true"></span>21&ndash;79% <span class="summary-filter-count" data-summary-count="mid">0</span></button>
+      <button type="button" class="summary-filter" data-summary-filter="high" aria-pressed="false"><span class="summary-dot" aria-hidden="true"></span>80&ndash;100% <span class="summary-filter-count" data-summary-count="high">0</span></button>
+      <button type="button" class="summary-filter" data-summary-filter="over" aria-pressed="false"><span class="summary-dot" aria-hidden="true"></span>&gt;100% <span class="summary-filter-count" data-summary-count="over">0</span></button>
+      <button type="button" class="summary-filter" data-summary-filter="none" aria-pressed="false" hidden><span class="summary-dot" aria-hidden="true"></span>Tiada peruntukan <span class="summary-filter-count" data-summary-count="none">0</span></button>
+    </div>
+  </div>
+  <div class="summary-mobile-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-4-4 4 4-4 4M8 8l-4 4 4 4"/></svg>Leret jadual untuk melihat amaun dan baki.</div>
+  <div class="summary-scroll" id="summaryScroll" tabindex="0" role="region" aria-label="Jadual ringkasan perbelanjaan; skrol untuk melihat semua lajur" aria-describedby="summaryResultInfo">
+    <table id="dashboardSummaryTable">
+      <caption class="summary-sr-only">Ringkasan butiran perbelanjaan mengikut BOM Paper. Klik nama BOM untuk perincian, atau tajuk lajur untuk menyusun. Amaun dalam Ringgit Malaysia.</caption>
+      <colgroup><col/><col/><col/><col/><col/><col/></colgroup>
+      <thead><tr>
+        <th scope="col">Bil.</th>
+        <th scope="col" aria-sort="none" data-summary-column="bom"><button type="button" class="summary-sort" data-summary-sort="bom"><span>BOM Paper</span><svg viewBox="0 0 12 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="sort-up" d="m3 6 3-3 3 3"/><path class="sort-down" d="m3 12 3 3 3-3"/></svg></button></th>
+        <th scope="col" aria-sort="none" data-summary-column="approved"><button type="button" class="summary-sort money-sort" data-summary-sort="approved"><span>Peruntukan<br/>diluluskan<small>RM</small></span><svg viewBox="0 0 12 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="sort-up" d="m3 6 3-3 3 3"/><path class="sort-down" d="m3 12 3 3 3-3"/></svg></button></th>
+        <th scope="col" aria-sort="none" data-summary-column="spent"><button type="button" class="summary-sort money-sort" data-summary-sort="spent"><span>Perbelanjaan<small>RM</small></span><svg viewBox="0 0 12 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="sort-up" d="m3 6 3-3 3 3"/><path class="sort-down" d="m3 12 3 3 3-3"/></svg></button></th>
+        <th scope="col" aria-sort="none" data-summary-column="pct"><button type="button" class="summary-sort center-sort" data-summary-sort="pct"><span>Perbelanjaan<small>%</small></span><svg viewBox="0 0 12 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="sort-up" d="m3 6 3-3 3 3"/><path class="sort-down" d="m3 12 3 3 3-3"/></svg></button></th>
+        <th scope="col" aria-sort="none" data-summary-column="balance"><button type="button" class="summary-sort money-sort" data-summary-sort="balance"><span>Baki<small>RM</small></span><svg viewBox="0 0 12 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="sort-up" d="m3 6 3-3 3 3"/><path class="sort-down" d="m3 12 3 3 3-3"/></svg></button></th>
+      </tr></thead>
+      <tbody id="dashboardTableBody"></tbody>
+      <tfoot id="dashboardTableFoot"></tfoot>
+    </table>
+    <div class="summary-empty" id="dashboardEmpty" hidden><span class="summary-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg></span><strong id="summaryEmptyTitle">Tiada rekod ditemukan</strong><p id="summaryEmptyText">Cuba kata carian yang lain.</p><button type="button" class="summary-btn" id="summaryEmptyResetBtn">Set semula penapis</button></div>
+  </div>
+  <div class="summary-footer"><div class="summary-result-info" id="summaryResultInfo" aria-live="polite" aria-atomic="true"></div></div>
+</section>
+</section>
+<section class="view" id="expenseView">
+<div class="section-head"><div><h2>Pengurusan Perbelanjaan</h2><p>Tambah, kemas kini atau padam rekod perbelanjaan latihan.</p></div></div>
+<section class="form-card" id="expenseFormCard">
+<div class="form-head"><div><h3>Cipta Perbelanjaan</h3></div></div>
+<div class="form-body">
+<form id="expenseForm">
+<div class="form-grid">
+<div class="field span-6"><label for="bomPaper">BOM Paper <span>*</span></label><input id="bomPaper" list="bomList" maxlength="120" placeholder="Contoh: BOM/HRMD/2026/01" required=""/><datalist id="bomList"></datalist></div>
+<div class="field span-6"><label for="approvedAllocation">Peruntukan Diluluskan (RM) <span>*</span></label><input id="approvedAllocation" inputmode="decimal" min="0" placeholder="0.00" required="" step="0.01" type="number"/></div>
+<div class="field span-12"><label for="programName">Nama Program</label><input id="programName" maxlength="180" placeholder="Masukkan nama program" type="text"/></div>
+<div class="field"><label for="expenseDetail">Butiran Perbelanjaan</label><input id="expenseDetail" maxlength="200" placeholder="Contoh: Yuran / Makan / Hotel" type="text"/></div>
+<div class="field"><label for="expenseMonth">Bulan</label><select id="expenseMonth"></select></div>
+<div class="field"><label for="expenseAmount">Amaun Perbelanjaan (RM)</label><input id="expenseAmount" inputmode="decimal" placeholder="0.00" step="0.01" type="number"/></div>
+</div>
+<div class="form-actions">
+<button class="btn btn-primary" id="addBtn" type="submit"><svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>Tambah</button>
+<button class="btn btn-warning" id="updateBtn" type="button"><svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>Kemas Kini</button>
+<button class="btn btn-danger" id="deleteBtn" type="button"><svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M4 7h16m-10 4v6m4-6v6M9 7l1-3h4l1 3m-9 0 1 14h10l1-14"></path></svg>Padam</button>
+</div>
+</form>
+</div>
+</section>
+<section class="table-card excel-summary-card" style="margin-bottom:18px">
+<div class="table-toolbar">
+<div><h3>Perbelanjaan Mengikut BOM Paper</h3></div>
+</div>
+<div class="table-scroll">
+<table class="excel-summary-table" id="excelSummaryTable">
+<thead><tr>
+<th>Bil.</th><th>BOM Paper</th><th>Peruntukan Diluluskan</th><th>Perbelanjaan</th><th>% Perbelanjaan</th><th>Baki</th><th>Perincian Perbelanjaan</th>
+<th>Jan</th><th>Feb</th><th>Mac</th><th>Apr</th><th>Mei</th><th>Jun</th><th>Jul</th><th>Ogos</th><th>Sept</th><th>Okt</th><th>Nov</th><th>Dis</th><th>Jumlah</th>
+</tr></thead>
+<tbody id="excelSummaryBody"></tbody>
+</table>
+<div class="empty" id="excelSummaryEmpty">Belum ada peruntukan BOM bagi tahun ini.</div>
+</div>
+</section>
+</section>
+<section class="view" id="programView">
+  <section class="form-card">
+    <div class="form-head"><div><h3>Maklumat Program</h3></div></div>
+    <div class="form-body">
+      <form id="programForm">
+        <div class="form-grid">
+          <div class="field span-12"><label for="programRegisterName">Nama Program <span>*</span></label><input id="programRegisterName" type="text" required maxlength="250" placeholder="Masukkan nama program latihan"/></div>
+          <div class="field span-6"><label for="programStart">Tarikh Mula <span>*</span></label><input id="programStart" type="date" required/></div>
+          <div class="field span-6"><label for="programEnd">Tarikh Tamat <span>*</span></label><input id="programEnd" type="date" required/></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" type="submit" id="programSubmit">Tambah</button><button class="btn btn-secondary" type="button" id="programReset" disabled>Kemaskini</button><button class="btn btn-danger" type="button" id="programDelete" disabled>Padam</button></div>
+      </form>
+    </div>
+  </section>
+  <section class="table-card" id="programTableCard">
+    <div class="table-toolbar"><div><h3>Senarai Program Yang Didaftarkan</h3><div class="table-subtitle" id="programCount">0 program</div></div><div class="toolbar-right"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="programSearch" type="search" placeholder="Cari nama program..." aria-label="Cari program"/></div></div></div>
+    <div class="table-scroll"><table id="programListTable"><colgroup><col style="width:8%"><col style="width:50%"><col style="width:21%"><col style="width:21%"></colgroup><thead><tr><th>Bil.</th><th>Nama Program</th><th>Tarikh Mula</th><th>Tarikh Tamat</th></tr></thead><tbody id="programListBody"></tbody></table></div>
+    <div class="empty" id="programEmpty">Belum ada program didaftarkan bagi tahun ini.</div>
+  </section>
+</section>
+<section class="view" id="reportView">
+<div class="section-head no-print">
+<div><h2>Laporan Perbelanjaan Latihan</h2></div>
+<div class="section-actions"><button class="btn btn-primary" id="printBtn" type="button">Cetak PDF</button></div>
+</div>
+<div class="report-grid"><div class="report-stat"><span>Peruntukan Diluluskan</span><strong id="reportApproved">RM0.00</strong></div><div class="report-stat"><span>Jumlah Perbelanjaan</span><strong id="reportSpent">RM0.00</strong></div><div class="report-stat"><span>Baki Peruntukan</span><strong id="reportBalance">RM0.00</strong></div></div>
+<section class="table-card excel-summary-card report-summary-card">
+<div class="table-toolbar"><div><h3>Perbelanjaan Mengikut BOM Paper</h3></div></div>
+<div class="table-scroll">
+<table class="excel-summary-table" id="reportExcelSummaryTable">
+<thead><tr>
+<th>Bil.</th><th>BOM Paper</th><th>Peruntukan Diluluskan</th><th>Perbelanjaan</th><th>% Perbelanjaan</th><th>Baki</th><th>Perincian Perbelanjaan</th>
+<th>Jan</th><th>Feb</th><th>Mac</th><th>Apr</th><th>Mei</th><th>Jun</th><th>Jul</th><th>Ogos</th><th>Sept</th><th>Okt</th><th>Nov</th><th>Dis</th><th>Jumlah</th>
+</tr></thead>
+<tbody id="reportExcelSummaryBody"></tbody>
+</table>
+<div class="empty" id="reportExcelSummaryEmpty">Belum ada peruntukan BOM bagi tahun ini.</div>
+</div>
+</section>
+<div class="report-meta"><span id="reportGeneratedAt">Dijana: -</span><span>Sistem Dashboard Perbelanjaan Latihan Kompetensi Warga MPC</span></div>
+</section>
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY = 'mpcTrainingExpenseDashboard_v10_excel2026_2';
+  const INITIAL_DATA = {"allocations":[{"id":"a2026_01","year":2026,"bom":"PROGRAM PENINGKATAN SAHSIAH DIRI BAGI KUMPULAN PELAKSANA MPC WILAYAH","allocation":65760.0,"sourceRow":10},{"id":"a2026_02","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","allocation":26100.0,"sourceRow":16},{"id":"a2026_03","year":2026,"bom":"KURSUS TIPS TENANG : MEMPERKUKUH KOMUNIKASI DAN PEMBENTUKAN NILAI WARGA ORGANISASI","allocation":7140.0,"sourceRow":53},{"id":"a2026_04","year":2026,"bom":"PROGRAM SESI PERKONGSIAN SECARA ATAS TALIAN KEPADA WARGA MPC 2026","allocation":3000.0,"sourceRow":58},{"id":"a2026_05","year":2026,"bom":"KURSUS KURSUS PRA PERSARAAN PERKHIDMATAN AWAM","allocation":7200.0,"sourceRow":64},{"id":"a2026_06","year":2026,"bom":"DATA ANALYTICS & PREDICTIVE DECISION-MAKING PROGRAMME","allocation":16500.0,"sourceRow":69},{"id":"a2026_07","year":2026,"bom":"AI LEADERSHIP FOR PUBLIC SECTOR STEWARDSHIP PROGRAMME","allocation":55600.0,"sourceRow":73},{"id":"a2026_08","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026 (RENEW)","allocation":29750.0,"sourceRow":78}],"expenses":[{"id":"e2026_001","year":2026,"bom":"PROGRAM PENINGKATAN SAHSIAH DIRI BAGI KUMPULAN PELAKSANA MPC WILAYAH","month":2,"detail":"Frame","amount":1000.0,"sourceRow":11},{"id":"e2026_002","year":2026,"bom":"PROGRAM PENINGKATAN SAHSIAH DIRI BAGI KUMPULAN PELAKSANA MPC WILAYAH","month":0,"detail":"Pengajar","amount":1400.0,"sourceRow":12},{"id":"e2026_003","year":2026,"bom":"PROGRAM PENINGKATAN SAHSIAH DIRI BAGI KUMPULAN PELAKSANA MPC WILAYAH","month":0,"detail":"Hotel","amount":7905.0,"sourceRow":13},{"id":"e2026_004","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":0,"detail":"Sesi Penilaian Pegawai E9 — Panel","amount":1300.0,"sourceRow":17},{"id":"e2026_005","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":0,"detail":"Sesi Penilaian Pegawai E9 — Makan","amount":1980.0,"sourceRow":18},{"id":"e2026_006","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":1,"detail":"Bengkel Sustainability Report MPC 2025 — Makan","amount":1320.0,"sourceRow":21},{"id":"e2026_007","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":1,"detail":"Bengkel AI Untuk Produktiviti Komunikasi Seksyen Pengurusan Kewangan (FMS) — Makan","amount":930.0,"sourceRow":24},{"id":"e2026_008","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":1,"detail":"Bengkel Transformasi Proses Kerja Seksyen Pengurusan Kewangan(FMS) — Makan","amount":900.0,"sourceRow":27},{"id":"e2026_009","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":3,"detail":"Bengkel Maklum Balas Pengguna Sistem MPC — Makan","amount":1925.0,"sourceRow":30},{"id":"e2026_010","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":3,"detail":"Kursus Pemantapan Pengurusan & Dokumentasi Pejabat — Makan","amount":1825.0,"sourceRow":33},{"id":"e2026_011","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":3,"detail":"Kursus Pemantapan Pengurusan & Dokumentasi Pejabat — Pengajar","amount":1800.0,"sourceRow":34},{"id":"e2026_012","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":4,"detail":"Induksi Pegawai Baru — Makan Minum","amount":4320.0,"sourceRow":37},{"id":"e2026_013","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":4,"detail":"Awareness Talk – “Rogue AI: The Future of Cyber Threats” — Makan Minum","amount":300.0,"sourceRow":40},{"id":"e2026_014","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":4,"detail":"Taklimat Kesihatan : Pengurusan Hormon & Stress untuk pekerja — Makan","amount":750.0,"sourceRow":43},{"id":"e2026_015","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":5,"detail":"Sesi Perkongsian Keupayaan Microsoft AI dalam Memperkasa Produktiviti dan Cara Kerja MPC — Makan","amount":2000.0,"sourceRow":46},{"id":"e2026_016","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026","month":5,"detail":"AI Dalam Tugasan Harian : Meningkatkan Produktiviti dan Kecekapan Kerja — Makan","amount":800.0,"sourceRow":49},{"id":"e2026_017","year":2026,"bom":"KURSUS TIPS TENANG : MEMPERKUKUH KOMUNIKASI DAN PEMBENTUKAN NILAI WARGA ORGANISASI","month":1,"detail":"Yuran (20 pax)","amount":6480.0,"sourceRow":54},{"id":"e2026_018","year":2026,"bom":"PROGRAM SESI PERKONGSIAN SECARA ATAS TALIAN KEPADA WARGA MPC 2026","month":2,"detail":"Sesi Perkongsian — CGSO","amount":160.0,"sourceRow":59},{"id":"e2026_019","year":2026,"bom":"PROGRAM SESI PERKONGSIAN SECARA ATAS TALIAN KEPADA WARGA MPC 2026","month":6,"detail":"Sesi Perkongsian — Teamwork","amount":120.0,"sourceRow":60},{"id":"e2026_020","year":2026,"bom":"PROGRAM SESI PERKONGSIAN SECARA ATAS TALIAN KEPADA WARGA MPC 2026","month":6,"detail":"Sesi Perkongsian — Hijrah","amount":300.0,"sourceRow":61},{"id":"e2026_021","year":2026,"bom":"KURSUS KURSUS PRA PERSARAAN PERKHIDMATAN AWAM","month":3,"detail":"Yuran (2 pax)","amount":3100.0,"sourceRow":65},{"id":"e2026_022","year":2026,"bom":"DATA ANALYTICS & PREDICTIVE DECISION-MAKING PROGRAMME","month":4,"detail":"Yuran","amount":16000.0,"sourceRow":70},{"id":"e2026_023","year":2026,"bom":"AI LEADERSHIP FOR PUBLIC SECTOR STEWARDSHIP PROGRAMME","month":5,"detail":"Hotel","amount":22200.0,"sourceRow":74},{"id":"e2026_024","year":2026,"bom":"AI LEADERSHIP FOR PUBLIC SECTOR STEWARDSHIP PROGRAMME","month":5,"detail":"Tenaga Pengajar","amount":3600.0,"sourceRow":75},{"id":"e2026_025","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026 (RENEW)","month":6,"detail":"Kursus Microsoft Excel Advanced — Makan","amount":4565.0,"sourceRow":80},{"id":"e2026_026","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026 (RENEW)","month":7,"detail":"Kursus Microsoft Excel Advanced — Tenaga Pengajar","amount":1800.0,"sourceRow":81},{"id":"e2026_027","year":2026,"bom":"LATIHAN PENINGKATAN KOMPETENSI PROGRAM DALAMAN BAGI WARGA MPC 2026 (RENEW)","month":6,"detail":"Perjumpaan Pegawai CBBP Bersama Pihak Pengurusan MPC — Makan","amount":270.0,"sourceRow":84}],"source":{"file":"Bajet 2026(2).xlsx","sheet":"Detail","loadedForYear":2026}};
+  
+  const MONTHS = ['Januari','Februari','Mac','April','Mei','Jun','Julai','Ogos','September','Oktober','November','Disember'];
+  const currentYear = new Date().getFullYear();
+  let state = loadState();
+  let selectedYear = currentYear;
+  let activeView = 'dashboard';
+  let selectedExpenseId = null;
+  let selectedAllocationId = null;
+  let activeMonthFilter = null;
+  let chartRects = [];
+  let toastTimer = null;
+
+  const $ = (id) => document.getElementById(id);
+  const money = new Intl.NumberFormat('ms-MY', { style:'currency', currency:'MYR', minimumFractionDigits:2, maximumFractionDigits:2 });
+  const num = new Intl.NumberFormat('ms-MY', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  const iconEdit = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>';
+  const iconTrash = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16m-10 4v6m4-6v6M9 7l1-3h4l1 3m-9 0 1 14h10l1-14"/></svg>';
+
+  function loadState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (parsed && Array.isArray(parsed.allocations) && Array.isArray(parsed.expenses)) return parsed;
+    } catch (_) {}
+    return JSON.parse(JSON.stringify(INITIAL_DATA));
+  }
+  function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function uid(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function normBom(v) { return String(v || '').trim().replace(/\s+/g, ' '); }
+  function escapeHtml(v) { return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function parseMoney(v) { const n = Number(v); return Number.isFinite(n) && n >= 0 ? n : 0; }
+  function parseSignedMoney(v) { const n = Number(v); return Number.isFinite(n) ? n : 0; }
+  function accountingNumber(v) { const n = Number(v) || 0; return n < 0 ? `(${num.format(Math.abs(n))})` : num.format(n); }
+  function yearAllocations(year=selectedYear) { return state.allocations.filter(a => Number(a.year) === Number(year)); }
+  function yearExpenses(year=selectedYear) { return state.expenses.filter(e => Number(e.year) === Number(year)); }
+  function getAllocationByBom(bom, year=selectedYear) { const key = normBom(bom).toLowerCase(); return state.allocations.find(a => Number(a.year)===Number(year) && normBom(a.bom).toLowerCase()===key); }
+  function getAllocationAmount(bom, year=selectedYear) { return getAllocationByBom(bom,year)?.allocation || 0; }
+  function metrics(year=selectedYear) {
+    const allocations = yearAllocations(year);
+    const expenses = yearExpenses(year);
+    const approved = allocations.reduce((s,a)=>s+Number(a.allocation||0),0);
+    const spent = expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+    const balance = approved - spent;
+    const util = approved > 0 ? (spent/approved)*100 : 0;
+    const monthly = MONTHS.map((_,i)=> expenses.filter(e=>Number(e.month)===i).reduce((s,e)=>s+Number(e.amount||0),0));
+    return { allocations, expenses, approved, spent, balance, util, monthly };
+  }
+
+  function buildMonthSelect() {
+    $('expenseMonth').innerHTML = '<option value="">Pilih bulan</option>' + MONTHS.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+  }
+  function buildYearSelect() {
+    const years = new Set([currentYear-2,currentYear-1,currentYear,currentYear+1,currentYear+2]);
+    state.allocations.forEach(a=>years.add(Number(a.year)));
+    state.expenses.forEach(e=>years.add(Number(e.year)));
+    const sorted = [...years].filter(Number.isFinite).sort((a,b)=>b-a);
+    $('yearSelect').innerHTML = sorted.map(y=>`<option value="${y}">${y}</option>`).join('');
+    if (!sorted.includes(selectedYear)) selectedYear = currentYear;
+    $('yearSelect').value = String(selectedYear);
+  }
+  function renderBomDatalist() {
+    $('bomList').innerHTML = yearAllocations().sort((a,b)=>a.bom.localeCompare(b.bom,'ms')).map(a=>`<option value="${escapeHtml(a.bom)}"></option>`).join('');
+  }
+
+  function switchView(view) {
+    activeView = view;
+    document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el=>el.classList.toggle('active', el.dataset.view===view));
+    const map = {dashboard:'dashboardView', expense:'expenseView', report:'reportView', program:'programView'};
+    $(map[view]).classList.add('active');
+    $('pageTitle').textContent = view==='dashboard' ? 'Dashboard Perbelanjaan Latihan Kompetensi Warga MPC' : view==='expense' ? 'Pengurusan Perbelanjaan Latihan Kompetensi Warga MPC' : view==='report' ? 'Laporan Perbelanjaan Latihan Kompetensi Warga MPC' : 'Senarai Latihan Kompetensi Warga MPC';
+    closeSidebar();
+    if (view==='report') renderReport();
+    if (view==='program') renderPrograms();
+    if (view==='dashboard') setTimeout(drawChart,30);
+    if (view==='expense') setTimeout(refreshExcelFloatingUI, 60);
+    else if (excelFloatingUI.initialized) setTimeout(updateExcelFloatingUI, 0);
+    if (view==='report') setTimeout(refreshReportExcelFloatingUI, 60);
+    else if (typeof reportExcelFloatingUI !== 'undefined' && reportExcelFloatingUI.initialized) setTimeout(updateReportExcelFloatingUI, 0);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function renderAll() {
+    buildYearSelect();
+    renderBomDatalist();
+    renderDashboard();
+    renderExpenseView();
+    renderReport();
+  }
+
+  function renderDashboard() {
+    const m = metrics();
+    $('kpiApproved').textContent = money.format(m.approved);
+    $('kpiSpent').textContent = money.format(m.spent);
+    $('kpiBalance').textContent = money.format(m.balance);
+    $('kpiUtil').textContent = Math.round(m.util) + '%';
+    $('kpiBomCount').textContent = 'Peruntukan Diluluskan BOM';
+    $('balanceCard').classList.toggle('negative', m.balance < 0);
+    $('chartYearBadge').textContent = selectedYear;
+    renderExcelSummaryTable();
+    renderDashboardTable();
+    setTimeout(drawChart,20);
+  }
+
+
+  function expenseDisplayParts(e) {
+    let program = String(e.program || '').trim();
+    let detail = String(e.detail || '').trim();
+    if (!program && detail.includes(' — ')) {
+      const parts = detail.split(' — ');
+      if (parts.length > 1) {
+        program = parts.shift().trim();
+        detail = parts.join(' — ').trim();
+      }
+    }
+    return { program, detail: detail || '-' };
+  }
+
+  function renderExcelSummaryTable() {
+    const allocations = yearAllocations().slice().sort((a,b)=>Number(a.sourceRow||999999)-Number(b.sourceRow||999999) || String(a.id).localeCompare(String(b.id)) || a.bom.localeCompare(b.bom,'ms'));
+    const blankMonths = () => '<td class="center-data"></td>'.repeat(12);
+    const blankGapCells = () => '<td colspan="6"></td><td></td>' + blankMonths() + '<td></td>';
+    const rows = allocations.map((a,i)=>{
+      const exps = yearExpenses()
+        .filter(e=>normBom(e.bom).toLowerCase()===normBom(a.bom).toLowerCase())
+        .slice()
+        .sort((x,y)=>Number(x.sourceRow||999999)-Number(y.sourceRow||999999) || Number(x.month)-Number(y.month) || String(x.createdAt||'').localeCompare(String(y.createdAt||'')));
+      const spent = exps.reduce((s,e)=>s+Number(e.amount||0),0);
+      const balance = Number(a.allocation||0)-spent;
+      const pct = Number(a.allocation||0)>0 ? spent/Number(a.allocation||0)*100 : 0;
+      const pctRounded = Math.round(pct);
+      const pctClass = pctRounded <= 20 ? 'percent-red' : pctRounded < 80 ? 'percent-yellow' : pctRounded <= 100 ? 'percent-green' : 'percent-red';
+      const monthly = MONTHS.map((_,m)=>exps.filter(e=>Number(e.month)===m).reduce((s,e)=>s+Number(e.amount||0),0));
+
+      let html = `${i>0 ? `<tr class="excel-group-gap" aria-hidden="true">${blankGapCells()}</tr>` : ''}<tr class="excel-bom-row"><td>${i+1}</td><td class="bom-cell"><button class="bom-edit-trigger" type="button" data-load-bom="${escapeHtml(a.id)}" title="Klik untuk tambah perbelanjaan baharu bagi BOM ini"><span>${escapeHtml(a.bom)}</span></button></td><td class="center-data">${accountingNumber(a.allocation)}</td><td class="center-data"><strong>${accountingNumber(spent)}</strong></td><td class="center-data ${pctClass}">${pctRounded}%</td><td class="center-data ${balance<0?'negative':''}">${accountingNumber(balance)}</td><td class="detail-cell"></td>${blankMonths()}<td class="center-data"></td></tr>`;
+
+      let lastProgram = null;
+      let renderedExpenseRows = 0;
+      exps.forEach(e=>{
+        const labels = expenseDisplayParts(e);
+        if (labels.program && labels.program !== lastProgram) {
+          if (renderedExpenseRows > 0) html += `<tr class="excel-program-gap" aria-hidden="true">${blankGapCells()}</tr>`;
+          html += `<tr class="excel-program-row"><td colspan="6"></td><td class="detail-cell">${escapeHtml(labels.program)}</td>${blankMonths()}<td class="center-data"></td></tr>`;
+          lastProgram = labels.program;
+        } else if (!labels.program) {
+          lastProgram = null;
+        }
+        const rowAmount = Number(e.amount||0);
+        const monthCells = MONTHS.map((monthName,m)=>{
+          const active = Number(e.month)===m && rowAmount !== 0;
+          const label = active ? accountingNumber(rowAmount) : '-';
+          return `<td class="center-data"><button class="inline-cell-trigger" type="button" data-inline-expense-amount="${escapeHtml(e.id)}" data-inline-month="${m}" title="Klik untuk edit atau padam amaun ${monthName}">${label}</button></td>`;
+        }).join('');
+        html += `<tr class="excel-detail-row"><td colspan="6"></td><td class="detail-cell"><button class="inline-cell-trigger" type="button" data-inline-expense-detail="${escapeHtml(e.id)}" title="Klik untuk edit perincian perbelanjaan">${escapeHtml(labels.detail)}</button></td>${monthCells}<td class="center-data">${rowAmount !== 0 ? accountingNumber(rowAmount) : ''}</td></tr>`;
+        renderedExpenseRows += 1;
+      });
+
+      if (exps.length) {
+        html += `<tr class="excel-subtotal-row"><td colspan="6"></td><td class="detail-cell"></td>${monthly.map(v=>`<td class="center-data">${v?accountingNumber(v):'-'}</td>`).join('')}<td class="center-data">${accountingNumber(spent)}</td></tr>`;
+      }
+      return html;
+    }).join('');
+
+    const total = metrics();
+    const totalPctRounded = Math.round(total.util);
+    const totalPctClass = totalPctRounded <= 20 ? 'percent-red' : totalPctRounded < 80 ? 'percent-yellow' : totalPctRounded <= 100 ? 'percent-green' : 'percent-red';
+    const totalMonthly = total.monthly.map(v=>`<td class="center-data">${v?accountingNumber(v):'-'}</td>`).join('');
+    const totalGapRow = allocations.length ? `<tr class="excel-total-gap" aria-hidden="true">${blankGapCells()}</tr>` : '';
+    const totalRow = allocations.length ? `<tr class="total-row"><td></td><td>JUMLAH</td><td class="center-data">${accountingNumber(total.approved)}</td><td class="center-data">${accountingNumber(total.spent)}</td><td class="center-data ${totalPctClass}">${totalPctRounded}%</td><td class="center-data ${total.balance<0?'negative':''}">${accountingNumber(total.balance)}</td><td></td>${totalMonthly}<td class="center-data">${accountingNumber(total.spent)}</td></tr>` : '';
+    $('excelSummaryBody').innerHTML = rows + totalGapRow + totalRow;
+    $('excelSummaryEmpty').style.display = allocations.length ? 'none' : 'block';
+    document.querySelectorAll('[data-load-bom]').forEach(btn=>btn.addEventListener('click',()=>loadBomForNewExpense(btn.dataset.loadBom)));
+    document.querySelectorAll('[data-inline-expense-detail]').forEach(btn=>btn.addEventListener('click',()=>startInlineExpenseDetailEdit(btn.dataset.inlineExpenseDetail, btn)));
+    document.querySelectorAll('[data-inline-expense-amount]').forEach(btn=>btn.addEventListener('click',()=>startInlineExpenseAmountEdit(btn.dataset.inlineExpenseAmount, Number(btn.dataset.inlineMonth), btn)));
+    if (activeView==='expense') setTimeout(refreshExcelFloatingUI, 0);
+  }
+
+
+  // v29: Header jadual BOM kekal di bawah topbar dan scrollbar mendatar sentiasa dicapai di bawah viewport.
+  const excelFloatingUI = {
+    stickyHead: null,
+    stickyTable: null,
+    hScroll: null,
+    hScrollInner: null,
+    scrollBox: null,
+    table: null,
+    syncing: false,
+    initialized: false
+  };
+
+  function initExcelFloatingUI() {
+    if (excelFloatingUI.initialized) return;
+    const table = $('excelSummaryTable');
+    if (!table) return;
+    const scrollBox = table.closest('.table-scroll');
+    if (!scrollBox) return;
+
+    const stickyHead = document.createElement('div');
+    stickyHead.className = 'excel-sticky-head';
+    stickyHead.setAttribute('aria-hidden', 'true');
+
+    const hScroll = document.createElement('div');
+    hScroll.className = 'excel-fixed-hscroll';
+    hScroll.setAttribute('aria-label', 'Skrol jadual Perbelanjaan Mengikut BOM Paper ke kiri atau kanan');
+    const hScrollInner = document.createElement('div');
+    hScrollInner.className = 'excel-fixed-hscroll-inner';
+    hScroll.appendChild(hScrollInner);
+
+    document.body.appendChild(stickyHead);
+    document.body.appendChild(hScroll);
+
+    excelFloatingUI.stickyHead = stickyHead;
+    excelFloatingUI.hScroll = hScroll;
+    excelFloatingUI.hScrollInner = hScrollInner;
+    excelFloatingUI.scrollBox = scrollBox;
+    excelFloatingUI.table = table;
+    excelFloatingUI.initialized = true;
+
+    scrollBox.addEventListener('scroll', () => {
+      if (!excelFloatingUI.syncing) {
+        excelFloatingUI.syncing = true;
+        hScroll.scrollLeft = scrollBox.scrollLeft;
+        excelFloatingUI.syncing = false;
+      }
+      shiftExcelStickyHeader();
+    }, {passive:true});
+
+    hScroll.addEventListener('scroll', () => {
+      if (!excelFloatingUI.syncing) {
+        excelFloatingUI.syncing = true;
+        scrollBox.scrollLeft = hScroll.scrollLeft;
+        excelFloatingUI.syncing = false;
+      }
+      shiftExcelStickyHeader();
+    }, {passive:true});
+
+    window.addEventListener('scroll', updateExcelFloatingUI, {passive:true});
+    window.addEventListener('resize', refreshExcelFloatingUI, {passive:true});
+  }
+
+  function rebuildExcelStickyHeader() {
+    initExcelFloatingUI();
+    if (!excelFloatingUI.initialized || activeView !== 'expense') return;
+
+    const table = excelFloatingUI.table;
+    const head = table.tHead;
+    if (!head || !head.rows.length) return;
+    const cells = Array.from(head.rows[0].cells);
+    const widths = cells.map(cell => cell.getBoundingClientRect().width);
+    const tableWidth = table.getBoundingClientRect().width;
+    if (!tableWidth || widths.some(width => !width)) return;
+
+    const cloneTable = document.createElement('table');
+    cloneTable.className = 'excel-sticky-table';
+    cloneTable.style.width = tableWidth + 'px';
+
+    const colgroup = document.createElement('colgroup');
+    widths.forEach(width => {
+      const col = document.createElement('col');
+      col.style.width = width + 'px';
+      colgroup.appendChild(col);
+    });
+    cloneTable.appendChild(colgroup);
+    cloneTable.appendChild(head.cloneNode(true));
+
+    excelFloatingUI.stickyHead.replaceChildren(cloneTable);
+    excelFloatingUI.stickyTable = cloneTable;
+    shiftExcelStickyHeader();
+  }
+
+  function shiftExcelStickyHeader() {
+    if (!excelFloatingUI.stickyTable || !excelFloatingUI.scrollBox) return;
+    const paddingLeft = parseFloat(getComputedStyle(excelFloatingUI.scrollBox).paddingLeft) || 0;
+    excelFloatingUI.stickyTable.style.transform = `translateX(${paddingLeft - excelFloatingUI.scrollBox.scrollLeft}px)`;
+  }
+
+  function updateExcelFloatingUI() {
+    if (!excelFloatingUI.initialized) return;
+    const {stickyHead, hScroll, hScrollInner, scrollBox, table} = excelFloatingUI;
+    const expenseView = $('expenseView');
+    const active = activeView === 'expense' && expenseView && expenseView.classList.contains('active');
+
+    if (!active) {
+      stickyHead.classList.remove('show');
+      hScroll.classList.remove('show');
+      return;
+    }
+
+    const boxRect = scrollBox.getBoundingClientRect();
+    const tableRect = table.getBoundingClientRect();
+    const headRect = table.tHead ? table.tHead.getBoundingClientRect() : {top:0,height:0};
+    const topbar = document.querySelector('.topbar');
+    const topOffset = topbar ? topbar.getBoundingClientRect().bottom : 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const left = Math.max(0, boxRect.left);
+    const right = Math.min(viewportWidth, boxRect.right);
+    const visibleWidth = Math.max(0, right - left);
+    const tableOnScreen = boxRect.top < viewportHeight && boxRect.bottom > topOffset;
+    const hasHorizontalOverflow = scrollBox.scrollWidth > scrollBox.clientWidth + 1;
+
+    if (tableOnScreen && hasHorizontalOverflow && visibleWidth > 40) {
+      hScroll.style.left = left + 'px';
+      hScroll.style.width = visibleWidth + 'px';
+      hScrollInner.style.width = scrollBox.scrollWidth + 'px';
+      if (Math.abs(hScroll.scrollLeft - scrollBox.scrollLeft) > 1) hScroll.scrollLeft = scrollBox.scrollLeft;
+      hScroll.classList.add('show');
+    } else {
+      hScroll.classList.remove('show');
+    }
+
+    const stickyHeight = excelFloatingUI.stickyHead.offsetHeight || headRect.height;
+    const shouldStick = tableOnScreen && headRect.top <= topOffset && tableRect.bottom > topOffset + stickyHeight;
+    if (shouldStick && visibleWidth > 40 && excelFloatingUI.stickyTable) {
+      stickyHead.style.top = topOffset + 'px';
+      stickyHead.style.left = left + 'px';
+      stickyHead.style.width = visibleWidth + 'px';
+      stickyHead.classList.add('show');
+      shiftExcelStickyHeader();
+    } else {
+      stickyHead.classList.remove('show');
+    }
+  }
+
+  function refreshExcelFloatingUI() {
+    initExcelFloatingUI();
+    if (!excelFloatingUI.initialized) return;
+    if (activeView !== 'expense') {
+      updateExcelFloatingUI();
+      return;
+    }
+    requestAnimationFrame(() => {
+      rebuildExcelStickyHeader();
+      updateExcelFloatingUI();
+    });
+  }
+
+
+
+  // v30: Header freeze + scrollbar mendatar fixed untuk jadual BOM dalam menu Laporan.
+  const reportExcelFloatingUI = {
+    stickyHead: null,
+    stickyTable: null,
+    hScroll: null,
+    hScrollInner: null,
+    scrollBox: null,
+    table: null,
+    syncing: false,
+    initialized: false
+  };
+
+  function initReportExcelFloatingUI() {
+    if (reportExcelFloatingUI.initialized) return;
+    const table = $('reportExcelSummaryTable');
+    if (!table) return;
+    const scrollBox = table.closest('.table-scroll');
+    if (!scrollBox) return;
+
+    const stickyHead = document.createElement('div');
+    stickyHead.className = 'excel-sticky-head report-excel-sticky-head';
+    stickyHead.setAttribute('aria-hidden', 'true');
+
+    const hScroll = document.createElement('div');
+    hScroll.className = 'excel-fixed-hscroll report-excel-fixed-hscroll';
+    hScroll.setAttribute('aria-label', 'Skrol jadual laporan Perbelanjaan Mengikut BOM Paper ke kiri atau kanan');
+    const hScrollInner = document.createElement('div');
+    hScrollInner.className = 'excel-fixed-hscroll-inner';
+    hScroll.appendChild(hScrollInner);
+
+    document.body.appendChild(stickyHead);
+    document.body.appendChild(hScroll);
+
+    reportExcelFloatingUI.stickyHead = stickyHead;
+    reportExcelFloatingUI.hScroll = hScroll;
+    reportExcelFloatingUI.hScrollInner = hScrollInner;
+    reportExcelFloatingUI.scrollBox = scrollBox;
+    reportExcelFloatingUI.table = table;
+    reportExcelFloatingUI.initialized = true;
+
+    scrollBox.addEventListener('scroll', () => {
+      if (!reportExcelFloatingUI.syncing) {
+        reportExcelFloatingUI.syncing = true;
+        hScroll.scrollLeft = scrollBox.scrollLeft;
+        reportExcelFloatingUI.syncing = false;
+      }
+      shiftReportExcelStickyHeader();
+    }, {passive:true});
+
+    hScroll.addEventListener('scroll', () => {
+      if (!reportExcelFloatingUI.syncing) {
+        reportExcelFloatingUI.syncing = true;
+        scrollBox.scrollLeft = hScroll.scrollLeft;
+        reportExcelFloatingUI.syncing = false;
+      }
+      shiftReportExcelStickyHeader();
+    }, {passive:true});
+
+    window.addEventListener('scroll', updateReportExcelFloatingUI, {passive:true});
+    window.addEventListener('resize', refreshReportExcelFloatingUI, {passive:true});
+  }
+
+  function rebuildReportExcelStickyHeader() {
+    initReportExcelFloatingUI();
+    if (!reportExcelFloatingUI.initialized || activeView !== 'report') return;
+
+    const table = reportExcelFloatingUI.table;
+    const head = table.tHead;
+    if (!head || !head.rows.length) return;
+    const cells = Array.from(head.rows[0].cells);
+    const widths = cells.map(cell => cell.getBoundingClientRect().width);
+    const tableWidth = table.getBoundingClientRect().width;
+    if (!tableWidth || widths.some(width => !width)) return;
+
+    const cloneTable = document.createElement('table');
+    cloneTable.className = 'excel-sticky-table';
+    cloneTable.style.width = tableWidth + 'px';
+
+    const colgroup = document.createElement('colgroup');
+    widths.forEach(width => {
+      const col = document.createElement('col');
+      col.style.width = width + 'px';
+      colgroup.appendChild(col);
+    });
+    cloneTable.appendChild(colgroup);
+    cloneTable.appendChild(head.cloneNode(true));
+
+    reportExcelFloatingUI.stickyHead.replaceChildren(cloneTable);
+    reportExcelFloatingUI.stickyTable = cloneTable;
+    shiftReportExcelStickyHeader();
+  }
+
+  function shiftReportExcelStickyHeader() {
+    if (!reportExcelFloatingUI.stickyTable || !reportExcelFloatingUI.scrollBox) return;
+    const paddingLeft = parseFloat(getComputedStyle(reportExcelFloatingUI.scrollBox).paddingLeft) || 0;
+    reportExcelFloatingUI.stickyTable.style.transform = `translateX(${paddingLeft - reportExcelFloatingUI.scrollBox.scrollLeft}px)`;
+  }
+
+  function updateReportExcelFloatingUI() {
+    if (!reportExcelFloatingUI.initialized) return;
+    const {stickyHead, hScroll, hScrollInner, scrollBox, table} = reportExcelFloatingUI;
+    const reportView = $('reportView');
+    const active = activeView === 'report' && reportView && reportView.classList.contains('active');
+
+    if (!active) {
+      stickyHead.classList.remove('show');
+      hScroll.classList.remove('show');
+      return;
+    }
+
+    const boxRect = scrollBox.getBoundingClientRect();
+    const tableRect = table.getBoundingClientRect();
+    const headRect = table.tHead ? table.tHead.getBoundingClientRect() : {top:0,height:0};
+    const topbar = document.querySelector('.topbar');
+    const topOffset = topbar ? topbar.getBoundingClientRect().bottom : 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const left = Math.max(0, boxRect.left);
+    const right = Math.min(viewportWidth, boxRect.right);
+    const visibleWidth = Math.max(0, right - left);
+    const tableOnScreen = boxRect.top < viewportHeight && boxRect.bottom > topOffset;
+    const hasHorizontalOverflow = scrollBox.scrollWidth > scrollBox.clientWidth + 1;
+
+    if (tableOnScreen && hasHorizontalOverflow && visibleWidth > 40) {
+      hScroll.style.left = left + 'px';
+      hScroll.style.width = visibleWidth + 'px';
+      hScrollInner.style.width = scrollBox.scrollWidth + 'px';
+      if (Math.abs(hScroll.scrollLeft - scrollBox.scrollLeft) > 1) hScroll.scrollLeft = scrollBox.scrollLeft;
+      hScroll.classList.add('show');
+    } else {
+      hScroll.classList.remove('show');
+    }
+
+    const stickyHeight = stickyHead.offsetHeight || headRect.height;
+    const shouldStick = tableOnScreen && headRect.top <= topOffset && tableRect.bottom > topOffset + stickyHeight;
+    if (shouldStick && visibleWidth > 40 && reportExcelFloatingUI.stickyTable) {
+      stickyHead.style.top = topOffset + 'px';
+      stickyHead.style.left = left + 'px';
+      stickyHead.style.width = visibleWidth + 'px';
+      stickyHead.classList.add('show');
+      shiftReportExcelStickyHeader();
+    } else {
+      stickyHead.classList.remove('show');
+    }
+  }
+
+  function refreshReportExcelFloatingUI() {
+    initReportExcelFloatingUI();
+    if (!reportExcelFloatingUI.initialized) return;
+    if (activeView !== 'report') {
+      updateReportExcelFloatingUI();
+      return;
+    }
+    requestAnimationFrame(() => {
+      rebuildReportExcelStickyHeader();
+      updateReportExcelFloatingUI();
+    });
+  }
+
+  function loadBomForNewExpense(allocationId) {
+    const allocation = state.allocations.find(a=>a.id===allocationId && Number(a.year)===selectedYear);
+    if (!allocation) return;
+    selectedAllocationId = allocation.id;
+    selectedExpenseId = null;
+    $('bomPaper').value = allocation.bom;
+    $('approvedAllocation').value = Number(allocation.allocation||0).toFixed(2);
+    $('programName').value = '';
+    $('expenseDetail').value = '';
+    $('expenseMonth').value = '';
+    $('expenseAmount').value = '';
+    $('addBtn').disabled = false;
+    $('updateBtn').disabled = false;
+    $('deleteBtn').disabled = false;
+    $('expenseFormCard').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>$('programName').focus(),250);
+    showToast('BOM Paper dipilih. Masukkan perbelanjaan baharu.', 'success');
+  }
+
+  function startInlineExpenseDetailEdit(expenseId, trigger) {
+    const expense = state.expenses.find(e=>e.id===expenseId && Number(e.year)===selectedYear);
+    if (!expense || !trigger) return;
+    const cell = trigger.closest('td');
+    const labels = expenseDisplayParts(expense);
+    const oldDetail = labels.detail === '-' ? '' : labels.detail;
+    const input = document.createElement('input');
+    input.className = 'inline-cell-input detail-inline-input';
+    input.type = 'text';
+    input.maxLength = 200;
+    input.value = oldDetail;
+    cell.innerHTML = '';
+    cell.appendChild(input);
+    input.focus();
+    input.select();
+    let finished = false;
+    const finish = (save) => {
+      if (finished) return;
+      finished = true;
+      if (!save) { renderExcelSummaryTable(); return; }
+      const newDetail = input.value.trim();
+      if (!newDetail) {
+        state.expenses = state.expenses.filter(e=>e.id!==expense.id);
+        if (selectedExpenseId===expense.id) clearForm();
+        saveState();
+        renderAll();
+        showToast('Perincian dikosongkan. Row perbelanjaan telah dipadam secara automatik.', 'success');
+        return;
+      }
+      if (!String(expense.program||'').trim() && labels.program) expense.program = labels.program;
+      expense.detail = newDetail;
+      expense.updatedAt = new Date().toISOString();
+      saveState();
+      renderAll();
+      showToast('Perincian perbelanjaan berjaya dikemas kini.', 'success');
+    };
+    input.addEventListener('keydown', ev=>{
+      if (ev.key === 'Enter') { ev.preventDefault(); finish(true); }
+      if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
+    });
+    input.addEventListener('blur', ()=>finish(true));
+  }
+
+  function startInlineExpenseAmountEdit(expenseId, monthIndex, trigger) {
+    const expense = state.expenses.find(e=>e.id===expenseId && Number(e.year)===selectedYear);
+    if (!expense || !trigger || monthIndex < 0 || monthIndex > 11) return;
+    const cell = trigger.closest('td');
+    const isCurrentMonth = Number(expense.month)===monthIndex;
+    const input = document.createElement('input');
+    input.className = 'inline-cell-input';
+    input.type = 'number';
+    input.inputMode = 'decimal';
+    input.step = '0.01';
+    input.removeAttribute('min');
+    input.value = isCurrentMonth && Number(expense.amount||0) !== 0 ? Number(expense.amount||0).toFixed(2) : '';
+    cell.innerHTML = '';
+    cell.appendChild(input);
+    input.focus();
+    input.select();
+    let finished = false;
+    const finish = (save) => {
+      if (finished) return;
+      finished = true;
+      if (!save) { renderExcelSummaryTable(); return; }
+      const amount = parseSignedMoney(input.value);
+      if (amount === 0) {
+        expense.month = monthIndex;
+        expense.amount = 0;
+        expense.updatedAt = new Date().toISOString();
+        const hasDetail = String(expense.detail||'').trim().length > 0;
+        if (!hasDetail) {
+          state.expenses = state.expenses.filter(e=>e.id!==expense.id);
+          if (selectedExpenseId===expense.id) clearForm();
+          saveState();
+          renderAll();
+          showToast('Perincian kosong dan amaun 0. Row perbelanjaan telah dipadam secara automatik.', 'success');
+          return;
+        }
+        saveState();
+        renderAll();
+        showToast(`Amaun ${MONTHS[monthIndex]} telah dipadam.`, 'success');
+        return;
+      }
+      expense.month = monthIndex;
+      expense.amount = amount;
+      expense.updatedAt = new Date().toISOString();
+      saveState();
+      renderAll();
+      showToast(`Amaun ${MONTHS[monthIndex]} berjaya dikemas kini.`, 'success');
+    };
+    input.addEventListener('keydown', ev=>{
+      if (ev.key === 'Enter') { ev.preventDefault(); finish(true); }
+      if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
+    });
+    input.addEventListener('blur', ()=>finish(true));
+  }
+
+  function filteredExpenses(searchId, monthFilter=null) {
+    const query = ($(searchId)?.value || '').trim().toLowerCase();
+    return yearExpenses().filter(e => {
+      const matchesMonth = monthFilter===null || Number(e.month)===Number(monthFilter);
+      const hay = `${e.bom} ${e.program || ''} ${e.detail || ''} ${MONTHS[Number(e.month)] || ''}`.toLowerCase();
+      return matchesMonth && (!query || hay.includes(query));
+    }).sort((a,b)=>Number(a.month)-Number(b.month) || String(a.bom).localeCompare(String(b.bom),'ms'));
+  }
+
+  // v34: Read-only, interactive Dashboard summary; uses the original data model.
+  const summaryUI = { filter:'all', sortKey:'source', sortDir:1, expanded:new Set(), compact:false, focus:false, scrollY:0 };
+  const summaryChevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+
+  function getSummaryRows() {
+    // Index once per render rather than repeatedly scanning the expense list.
+    const byBom = new Map();
+    yearExpenses().forEach(e => {
+      const key = normBom(e.bom).toLowerCase();
+      if (!byBom.has(key)) byBom.set(key, []);
+      byBom.get(key).push(e);
+    });
+    return yearAllocations().slice()
+      .sort((a,b)=>Number(a.sourceRow||9999)-Number(b.sourceRow||9999) || String(a.bom).localeCompare(String(b.bom),'ms'))
+      .map((a,index)=> {
+        const expenses = (byBom.get(normBom(a.bom).toLowerCase()) || []).slice()
+          .sort((x,y)=>Number(x.month)-Number(y.month) || Number(x.sourceRow||999999)-Number(y.sourceRow||999999));
+        const approved = Number(a.allocation||0);
+        const spent = expenses.reduce((sum,e)=>sum+Number(e.amount||0),0);
+        const pct = approved>0 ? spent/approved*100 : (spent>0 ? null : 0);
+        const rounded = pct===null ? null : Math.round(pct);
+        // Preserve the source's rounded-percentage colour bands.
+        const band = rounded===null ? 'none' : rounded<=20 ? 'low' : rounded<80 ? 'mid' : rounded<=100 ? 'high' : 'over';
+        return { id:String(a.id), bom:String(a.bom), source:index, approved, spent, pct, rounded, band, balance:approved-spent, expenses };
+      });
+  }
+
+  function filterSummaryRows(rows, applyBand=true) {
+    const query = ($('dashboardSearch').value || '').trim().toLocaleLowerCase('ms-MY');
+    return rows.filter(row => {
+      const haystack = [row.bom,...row.expenses.map(e=>`${e.program||''} ${e.detail||''}`)].join(' ').toLocaleLowerCase('ms-MY');
+      return (!query || haystack.includes(query)) && (!applyBand || summaryUI.filter==='all' || row.band===summaryUI.filter);
+    });
+  }
+
+  function sortSummaryRows(rows) {
+    const {sortKey:key,sortDir:direction} = summaryUI;
+    return rows.slice().sort((a,b)=> {
+      let result = key==='bom' ? a.bom.localeCompare(b.bom,'ms') : ((a[key]===null ? -1 : a[key]) - (b[key]===null ? -1 : b[key]));
+      return result*direction || a.source-b.source;
+    });
+  }
+
+  function summaryPercentText(row) { return row.rounded===null ? '\u2014' : row.rounded+'%'; }
+
+  function summaryProgress(row) {
+    const percent = summaryPercentText(row);
+    const width = row.pct===null ? 0 : Math.max(0,Math.min(100,row.pct));
+    const title = row.pct===null ? 'Peratus tidak dapat dikira kerana peruntukan adalah sifar.' : `${percent} daripada peruntukan diluluskan`;
+    return `<div class="summary-progress is-${row.band}" title="${escapeHtml(title)}"><div class="summary-progress-top"><span class="summary-percent-tag">${percent}</span></div><div class="summary-progress-track" aria-hidden="true"><span class="summary-progress-fill" style="width:${width.toFixed(3)}%"></span></div></div>`;
+  }
+
+  function summaryDetailHtml(row) {
+    const detailTable = row.expenses.length ? `<table class="summary-detail-table"><caption class="summary-sr-only">Perincian bagi ${escapeHtml(row.bom)}</caption><thead><tr><th scope="col">Bulan</th><th scope="col">Nama program</th><th scope="col">Butiran perbelanjaan</th><th scope="col">Amaun (RM)</th></tr></thead><tbody>${row.expenses.map(e=> {
+      const parts = expenseDisplayParts(e);
+      return `<tr><td><span class="summary-month">${escapeHtml(MONTHS[Number(e.month)] || '\u2014')}</span></td><td>${escapeHtml(parts.program || '\u2014')}</td><td>${escapeHtml(parts.detail)}</td><td>${num.format(Number(e.amount||0))}</td></tr>`;
+    }).join('')}</tbody></table><div class="summary-detail-total">Jumlah perbelanjaan BOM <strong>${money.format(row.spent)}</strong></div>` : '<div class="summary-detail-empty">Belum ada rekod perbelanjaan bagi BOM Paper ini.</div>';
+    return `<div class="summary-detail-panel"><div class="summary-detail-top"><div><span class="summary-detail-title">Perincian perbelanjaan</span><span class="summary-detail-subtitle">${row.expenses.length} rekod &middot; Tahun ${selectedYear} &middot; Paparan sahaja</span></div><button type="button" class="summary-btn" data-summary-manage="${escapeHtml(row.id)}">Buka di Perbelanjaan</button></div>${detailTable}</div>`;
+  }
+
+  function renderDashboardTable() {
+    const allRows = getSummaryRows();
+    const searched = filterSummaryRows(allRows,false);
+    const rows = sortSummaryRows(filterSummaryRows(allRows));
+    const query = $('dashboardSearch').value.trim();
+    const isFiltered = !!query || summaryUI.filter!=='all';
+    const counts = {all:searched.length,low:0,mid:0,high:0,over:0,none:0};
+    searched.forEach(row=>counts[row.band]++);
+    const validIds = new Set(allRows.map(row=>row.id));
+    for (const id of summaryUI.expanded) if (!validIds.has(id)) summaryUI.expanded.delete(id);
+    $('summaryYear').textContent = selectedYear;
+    document.querySelectorAll('[data-summary-count]').forEach(el=>el.textContent=counts[el.dataset.summaryCount]);
+    document.querySelectorAll('[data-summary-filter]').forEach(btn=> {
+      btn.setAttribute('aria-pressed',String(btn.dataset.summaryFilter===summaryUI.filter));
+      if (btn.dataset.summaryFilter==='none') btn.hidden = !counts.none && summaryUI.filter!=='none';
+    });
+    document.querySelectorAll('[data-summary-column]').forEach(th=> {
+      const active = th.dataset.summaryColumn===summaryUI.sortKey;
+      th.setAttribute('aria-sort', active ? (summaryUI.sortDir===1 ? 'ascending' : 'descending') : 'none');
+      const button = th.querySelector('button');
+      const label = {bom:'BOM Paper',approved:'Peruntukan diluluskan',spent:'Perbelanjaan',pct:'Peratus perbelanjaan',balance:'Baki'}[th.dataset.summaryColumn];
+      button.setAttribute('aria-label',`${label}: susun ${active && summaryUI.sortDir===1 ? 'menurun' : 'menaik'}`);
+    });
+    $('dashboardTableBody').innerHTML = rows.map((row,index)=> {
+      const opened = summaryUI.expanded.has(row.id);
+      const detailId = 'summary-detail-'+encodeURIComponent(row.id);
+      const buttonId = 'summary-bom-'+encodeURIComponent(row.id);
+      return `<tr class="summary-row${opened?' is-open':''}" data-summary-row="${escapeHtml(row.id)}"><td><span class="summary-index">${String(index+1).padStart(2,'0')}</span></td><td><button class="summary-bom-button" type="button" id="${buttonId}" data-summary-expand="${escapeHtml(row.id)}" aria-expanded="${opened}" aria-controls="${detailId}"><span class="summary-bom-copy"><span class="summary-bom-name">${escapeHtml(row.bom)}</span></span></button></td><td class="summary-money summary-approved">${num.format(row.approved)}</td><td class="summary-money summary-spent">${num.format(row.spent)}</td><td class="summary-percent">${summaryProgress(row)}</td><td class="summary-money"><span class="summary-balance${row.balance<0?' negative':row.balance===0?' zero':''}">${num.format(row.balance)}</span></td></tr><tr class="summary-detail" id="${detailId}" ${opened?'':'hidden'}><td colspan="6"><div role="region" aria-labelledby="${buttonId}">${opened?summaryDetailHtml(row):''}</div></td></tr>`;
+    }).join('');
+    const total = rows.reduce((t,row)=>({approved:t.approved+row.approved,spent:t.spent+row.spent,balance:t.balance+row.balance}),{approved:0,spent:0,balance:0});
+    const totalPct = total.approved>0 ? Math.round(total.spent/total.approved*100)+'%' : total.spent>0 ? '\u2014' : '0%';
+    $('dashboardTableFoot').innerHTML = rows.length ? `<tr><td colspan="2"><span class="summary-total-label">${isFiltered?'JUMLAH DITAPIS':'JUMLAH KESELURUHAN'}</span></td><td>${num.format(total.approved)}</td><td>${num.format(total.spent)}</td><td class="summary-total-pct">${totalPct}</td><td class="summary-total-balance${total.balance<0?' negative':''}">${num.format(total.balance)}</td></tr>` : '';
+    $('dashboardEmpty').hidden = rows.length>0;
+    $('summaryEmptyTitle').textContent = allRows.length ? 'Tiada rekod ditemukan' : 'Belum ada rekod peruntukan';
+    $('summaryEmptyText').textContent = allRows.length ? 'Cuba kata carian yang lain.' : `Belum ada rekod peruntukan BOM bagi tahun ${selectedYear}.`;
+    $('summaryEmptyResetBtn').hidden = !isFiltered;
+    $('summaryResultInfo').innerHTML = '';
+    const allOpen = rows.length>0 && rows.every(row=>summaryUI.expanded.has(row.id));
+    $('summaryExpandAllBtn').setAttribute('aria-expanded',String(allOpen));
+    $('summaryExpandLabel').textContent = allOpen ? 'Tutup semua' : 'Buka semua';
+    $('summaryExpandAllBtn').disabled = !rows.length;
+    $('summaryExportBtn').disabled = !rows.length;
+    $('summaryResetBtn').disabled = !isFiltered && summaryUI.sortKey==='source' && summaryUI.expanded.size===0;
+  }
+
+  function resetSummary() {
+    $('dashboardSearch').value = '';
+    summaryUI.filter = 'all'; summaryUI.sortKey = 'source'; summaryUI.sortDir = 1; summaryUI.expanded.clear();
+    renderDashboardTable(); $('summaryScroll').scrollTop=0;
+  }
+
+  function setSummaryFocus(enable) {
+    if (enable) summaryUI.scrollY = window.scrollY;
+    summaryUI.focus = enable;
+    document.body.classList.toggle('summary-focus-mode',enable);
+    $('summaryFocusBtn').setAttribute('aria-pressed',String(enable));
+    $('summaryFocusLabel').textContent = enable ? 'Keluar fokus' : 'Fokus jadual';
+    $('summaryFocusBtn').setAttribute('aria-label',enable?'Keluar fokus jadual':'Fokus jadual');
+    $('summaryFocusBtn').title = enable ? 'Keluar fokus jadual (Esc)' : 'Fokus jadual';
+    // Focus mode is an in-page layout, not a modal; native keyboard order remains.
+    requestAnimationFrame(()=>window.scrollTo({top:enable?0:summaryUI.scrollY,behavior:'instant'}));
+    if (!enable) setTimeout(drawChart,30);
+  }
+
+  function exportSummaryCsv() {
+    const rows = sortSummaryRows(filterSummaryRows(getSummaryRows()));
+    if (!rows.length) return;
+    // Guard text fields against spreadsheet formula execution without changing stored data.
+    const csvText = value => {
+      let text = String(value??'');
+      if (/^[\s\uFEFF]*[=+@-]/.test(text)) text="'"+text;
+      return '"'+text.replace(/"/g,'""')+'"';
+    };
+    const header = ['Bil','Tahun','BOM Paper','Peruntukan Diluluskan (RM)','Perbelanjaan (RM)','% Perbelanjaan','Baki (RM)'];
+    const lines = [header.map(csvText).join(',')];
+    rows.forEach((r,i)=>lines.push([i+1,selectedYear,csvText(r.bom),r.approved.toFixed(2),r.spent.toFixed(2),r.rounded===null?'':r.rounded,r.balance.toFixed(2)].join(',')));
+    const t = rows.reduce((a,r)=>({approved:a.approved+r.approved,spent:a.spent+r.spent}),{approved:0,spent:0});
+    lines.push(['',selectedYear,csvText('JUMLAH BOM DIPAPARKAN'),t.approved.toFixed(2),t.spent.toFixed(2),t.approved>0?Math.round(t.spent/t.approved*100):t.spent>0?'':0,(t.approved-t.spent).toFixed(2)].join(','));
+    const blob = new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=`Ringkasan_Perbelanjaan_MPC_${selectedYear}.csv`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+    showToast('Ringkasan mengikut paparan semasa telah dieksport.','success');
+  }
+
+  function initSummaryUI() {
+    $('dashboardSummaryCard').addEventListener('click',event=> {
+      const expand = event.target.closest('[data-summary-expand]');
+      if (expand) {
+        const id=expand.dataset.summaryExpand;
+        const buttonId=expand.id;
+        if (summaryUI.expanded.has(id)) summaryUI.expanded.delete(id); else summaryUI.expanded.add(id);
+        renderDashboardTable(); $(buttonId)?.focus({preventScroll:true}); return;
+      }
+      const filter = event.target.closest('[data-summary-filter]');
+      if (filter) { summaryUI.filter=filter.dataset.summaryFilter; renderDashboardTable(); $('summaryScroll').scrollTop=0; return; }
+      const sort = event.target.closest('[data-summary-sort]');
+      if (sort) {
+        const key=sort.dataset.summarySort;
+        summaryUI.sortDir=summaryUI.sortKey===key ? -summaryUI.sortDir : 1;
+        summaryUI.sortKey=key; renderDashboardTable(); $('summaryScroll').scrollTop=0; return;
+      }
+      const manage = event.target.closest('[data-summary-manage]');
+      if (manage) { if (summaryUI.focus) setSummaryFocus(false); switchView('expense'); editAllocation(manage.dataset.summaryManage); }
+    });
+    $('summaryResetBtn').addEventListener('click',resetSummary);
+    $('summaryEmptyResetBtn').addEventListener('click',()=>{resetSummary();$('dashboardSearch').focus();});
+    $('summaryExpandAllBtn').addEventListener('click',()=> {
+      const rows=filterSummaryRows(getSummaryRows());
+      const allOpen=rows.every(row=>summaryUI.expanded.has(row.id));
+      rows.forEach(row=>allOpen?summaryUI.expanded.delete(row.id):summaryUI.expanded.add(row.id));
+      renderDashboardTable();
+    });
+    $('summaryDensityBtn').addEventListener('click',()=> {
+      summaryUI.compact=!summaryUI.compact;
+      $('dashboardSummaryCard').classList.toggle('is-compact',summaryUI.compact);
+      $('summaryDensityBtn').setAttribute('aria-pressed',String(summaryUI.compact));
+      $('summaryDensityLabel').textContent=summaryUI.compact?'Selesa':'Padat';
+    });
+    $('summaryFocusBtn').addEventListener('click',()=>setSummaryFocus(!summaryUI.focus));
+    $('summaryExportBtn').addEventListener('click',exportSummaryCsv);
+    document.addEventListener('keydown',event=> {
+      if (event.key==='Escape' && summaryUI.focus) { setSummaryFocus(false); $('summaryFocusBtn').focus({preventScroll:true}); }
+    });
+  }
+
+  function renderExpenseView() {
+    renderExcelSummaryTable();
+  }
+
+  function renderAllocationList() {
+    if (!$('allocationList') || !$('allocationEmpty')) return;
+    const items = yearAllocations().sort((a,b)=>a.bom.localeCompare(b.bom,'ms'));
+    $('allocationList').innerHTML = items.map(a=>`<div class="alloc-item"><div><div class="name">${escapeHtml(a.bom)}</div><div class="amount">${money.format(a.allocation)}</div></div><div class="small-actions"><button class="icon-btn" type="button" data-edit-allocation="${a.id}" title="Kemas kini peruntukan">${iconEdit}</button><button class="icon-btn danger" type="button" data-delete-allocation="${a.id}" title="Padam peruntukan">${iconTrash}</button></div></div>`).join('');
+    $('allocationEmpty').style.display = items.length ? 'none' : 'block';
+    document.querySelectorAll('[data-edit-allocation]').forEach(btn=>btn.addEventListener('click',()=>editAllocation(btn.dataset.editAllocation)));
+    document.querySelectorAll('[data-delete-allocation]').forEach(btn=>btn.addEventListener('click',()=>deleteAllocation(btn.dataset.deleteAllocation)));
+  }
+
+  function renderExpenseTable() {
+    if (!$('expenseTableBody') || !$('expenseEmpty')) return;
+    const rows = filteredExpenses('expenseSearch');
+    $('expenseTableBody').innerHTML = rows.map((e,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(e.bom)}</strong></td><td class="money">${money.format(getAllocationAmount(e.bom))}</td><td><span class="badge">${MONTHS[Number(e.month)] || '-'}</span></td><td>${escapeHtml(e.detail || '-')}</td><td class="money"><strong>${money.format(e.amount)}</strong></td><td class="money"><div class="row-actions"><button class="icon-btn" type="button" data-edit-expense="${e.id}" title="Kemas kini">${iconEdit}</button><button class="icon-btn danger" type="button" data-delete-expense="${e.id}" title="Padam">${iconTrash}</button></div></td></tr>`).join('');
+    $('expenseEmpty').style.display = rows.length ? 'none' : 'block';
+    document.querySelectorAll('[data-edit-expense]').forEach(btn=>btn.addEventListener('click',()=>editExpense(btn.dataset.editExpense)));
+    document.querySelectorAll('[data-delete-expense]').forEach(btn=>btn.addEventListener('click',()=>quickDeleteExpense(btn.dataset.deleteExpense)));
+  }
+
+  function upsertAllocation(bom, allocation) {
+    const existing = getAllocationByBom(bom);
+    if (existing) { existing.bom = bom; existing.allocation = allocation; existing.updatedAt = new Date().toISOString(); return existing; }
+    const a = {id:uid('a'),year:selectedYear,bom,allocation,createdAt:new Date().toISOString()};
+    state.allocations.push(a); return a;
+  }
+
+  function addRecord(ev) {
+    ev.preventDefault();
+    const bom = normBom($('bomPaper').value);
+    const allocation = parseMoney($('approvedAllocation').value);
+    const monthVal = $('expenseMonth').value;
+    const amount = parseSignedMoney($('expenseAmount').value);
+    const program = $('programName').value.trim();
+    const detail = $('expenseDetail').value.trim();
+    if (!bom) return showToast('Sila isi BOM Paper.', 'error');
+    if (allocation <= 0) return showToast('Peruntukan diluluskan mesti melebihi RM0.00.', 'error');
+    if (amount !== 0 && monthVal === '') return showToast('Sila pilih bulan untuk rekod perbelanjaan.', 'error');
+    if (amount !== 0 && !detail) return showToast('Sila isi butiran perbelanjaan.', 'error');
+    upsertAllocation(bom, allocation);
+    if (amount !== 0) state.expenses.push({id:uid('e'),year:selectedYear,bom,program,month:Number(monthVal),detail,amount,createdAt:new Date().toISOString()});
+    saveState();
+    clearForm();
+    renderAll();
+    showToast(amount !== 0 ? 'Rekod peruntukan dan perbelanjaan berjaya ditambah.' : 'Peruntukan BOM berjaya disimpan.', 'success');
+  }
+
+  function editExpense(id) {
+    const e = state.expenses.find(x=>x.id===id); if (!e) return;
+    selectedExpenseId = id; selectedAllocationId = null;
+    $('bomPaper').value = e.bom;
+    $('approvedAllocation').value = getAllocationAmount(e.bom).toFixed(2);
+    $('programName').value = e.program || '';
+    $('expenseMonth').value = String(e.month);
+    $('expenseAmount').value = Number(e.amount).toFixed(2);
+    $('expenseDetail').value = e.detail || '';
+    $('updateBtn').disabled = false; $('deleteBtn').disabled = false; $('addBtn').disabled = true;
+    switchView('expense');
+    setTimeout(()=>$('expenseFormCard').scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }
+
+  function editAllocation(id) {
+    const a = state.allocations.find(x=>x.id===id); if (!a) return;
+    selectedAllocationId = id; selectedExpenseId = null;
+    $('bomPaper').value = a.bom;
+    $('approvedAllocation').value = Number(a.allocation).toFixed(2);
+    $('programName').value = '';
+    $('expenseMonth').value = '';
+    $('expenseAmount').value = '';
+    $('expenseDetail').value = '';
+    $('updateBtn').disabled = false; $('deleteBtn').disabled = false; $('addBtn').disabled = true;
+    $('expenseFormCard').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function updateSelected() {
+    const bom = normBom($('bomPaper').value);
+    const allocation = parseMoney($('approvedAllocation').value);
+    if (!bom || allocation <= 0) return showToast('BOM Paper dan peruntukan yang sah diperlukan.', 'error');
+    if (!selectedAllocationId && !selectedExpenseId) {
+      const existingAllocation = getAllocationByBom(bom);
+      if (existingAllocation) selectedAllocationId = existingAllocation.id;
+    }
+    if (selectedAllocationId) {
+      const a = state.allocations.find(x=>x.id===selectedAllocationId); if (!a) return;
+      const oldBom = a.bom;
+      const conflict = state.allocations.find(x=>x.id!==a.id && Number(x.year)===selectedYear && normBom(x.bom).toLowerCase()===bom.toLowerCase());
+      if (conflict) return showToast('BOM Paper tersebut telah wujud. Gunakan rekod BOM yang sedia ada.', 'error');
+      a.bom = bom; a.allocation = allocation; a.updatedAt = new Date().toISOString();
+      state.expenses.filter(e=>Number(e.year)===selectedYear && normBom(e.bom).toLowerCase()===normBom(oldBom).toLowerCase()).forEach(e=>e.bom=bom);
+    } else if (selectedExpenseId) {
+      const e = state.expenses.find(x=>x.id===selectedExpenseId); if (!e) return;
+      const monthVal = $('expenseMonth').value;
+      const amount = parseSignedMoney($('expenseAmount').value);
+      const program = $('programName').value.trim();
+      const detail = $('expenseDetail').value.trim();
+      if (!detail) {
+        state.expenses = state.expenses.filter(x=>x.id!==e.id);
+        saveState();
+        clearForm();
+        renderAll();
+        showToast('Perincian dikosongkan. Row perbelanjaan telah dipadam secara automatik.', 'success');
+        return;
+      }
+      if (monthVal==='') return showToast('Sila pilih bulan.', 'error');
+      if (amount===0) return showToast('Amaun perbelanjaan mesti berbeza daripada RM0.00.', 'error');
+      upsertAllocation(bom,allocation);
+      e.bom=bom; e.program=program; e.month=Number(monthVal); e.amount=amount; e.detail=detail; e.updatedAt=new Date().toISOString();
+    } else return;
+    saveState(); clearForm(); renderAll(); showToast('Rekod berjaya dikemas kini.','success');
+  }
+
+  function deleteSelected() {
+    if (selectedExpenseId) return quickDeleteExpense(selectedExpenseId, true);
+    if (selectedAllocationId) return deleteAllocation(selectedAllocationId, true);
+    const bom = normBom($('bomPaper').value);
+    const existingAllocation = bom ? getAllocationByBom(bom) : null;
+    if (existingAllocation) return deleteAllocation(existingAllocation.id, true);
+    return showToast('Tiada rekod sedia ada dipilih untuk dipadam.', 'error');
+  }
+
+  function quickDeleteExpense(id, fromForm=false) {
+    const e = state.expenses.find(x=>x.id===id); if (!e) return;
+    if (!confirm(`Padam rekod perbelanjaan ${money.format(e.amount)} untuk ${e.bom}?`)) return;
+    state.expenses = state.expenses.filter(x=>x.id!==id);
+    saveState(); if (fromForm || selectedExpenseId===id) clearForm(); renderAll(); showToast('Rekod perbelanjaan telah dipadam.','success');
+  }
+
+  function deleteAllocation(id, fromForm=false) {
+    const a = state.allocations.find(x=>x.id===id); if (!a) return;
+    const linked = state.expenses.filter(e=>Number(e.year)===Number(a.year) && normBom(e.bom).toLowerCase()===normBom(a.bom).toLowerCase());
+
+    // Jika BOM dipilih melalui tajuk jadual dan Padam ditekan pada borang,
+    // padam terus BOM bersama semua rekod perbelanjaan berkaitan tanpa popup halangan.
+    if (fromForm || selectedAllocationId===id) {
+      const key = normBom(a.bom).toLowerCase();
+      state.expenses = state.expenses.filter(e=>!(Number(e.year)===Number(a.year) && normBom(e.bom).toLowerCase()===key));
+      state.allocations = state.allocations.filter(x=>x.id!==id);
+      saveState();
+      clearForm();
+      renderAll();
+      showToast(linked.length ? 'BOM Paper dan rekod perbelanjaan berkaitan telah dipadam.' : 'BOM Paper telah dipadam.','success');
+      return;
+    }
+
+    if (linked.length) return showToast(`Peruntukan ini mempunyai ${linked.length} rekod perbelanjaan. Padam atau pindahkan rekod tersebut dahulu.`, 'error');
+    if (!confirm(`Padam peruntukan ${a.bom} berjumlah ${money.format(a.allocation)}?`)) return;
+    state.allocations = state.allocations.filter(x=>x.id!==id);
+    saveState(); renderAll(); showToast('Peruntukan BOM telah dipadam.','success');
+  }
+
+  function clearForm() {
+    selectedExpenseId=null; selectedAllocationId=null;
+    $('expenseForm').reset();
+    $('updateBtn').disabled=false; $('deleteBtn').disabled=false; $('addBtn').disabled=false;
+  }
+
+  function drawChart() {
+    const canvas = $('expenseChart');
+    if (!canvas || !canvas.offsetWidth) return;
+    const wrap = canvas.parentElement;
+    const cssW = wrap.clientWidth, cssH = wrap.clientHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr);
+    const ctx = canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,cssW,cssH);
+    const vals = metrics().monthly;
+    const max = Math.max(...vals, 0);
+    const step = 10000;
+    const niceMax = Math.max(step, Math.ceil(max/step)*step);
+    const tickCount = Math.max(1, Math.round(niceMax/step));
+    const pad = {l:76,r:14,t:42,b:48};
+    const w=cssW-pad.l-pad.r, h=cssH-pad.t-pad.b;
+    ctx.textBaseline='middle'; ctx.strokeStyle='#e6edf4'; ctx.lineWidth=1;
+    const tickRight = pad.l - 10;
+    ctx.font='600 11.5px system-ui';
+    const topTickWidth = ctx.measureText(axisNumber(niceMax)).width;
+    const axisUnitX = tickRight - (topTickWidth / 2);
+    ctx.textAlign='center'; ctx.textBaseline='bottom'; ctx.font='700 11px system-ui'; ctx.fillStyle='#43566c';
+    ctx.fillText('(RM)', axisUnitX, pad.t - 25);
+    for(let i=0;i<=tickCount;i++){
+      const val = step*i;
+      const y=pad.t+h-(val/niceMax*h);
+      ctx.strokeStyle='#d8e1eb'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(cssW-pad.r,y); ctx.stroke();
+      ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.font='600 11.5px system-ui'; ctx.fillStyle='#43566c';
+      ctx.fillText(axisNumber(val),tickRight,y);
+      ctx.strokeStyle='#8ea0b5'; ctx.lineWidth=1.35;
+      ctx.beginPath(); ctx.moveTo(pad.l-5,y); ctx.lineTo(pad.l,y); ctx.stroke();
+    }
+    // Paksi utama lebih gelap supaya jelas seperti contoh rujukan.
+    ctx.strokeStyle='#8ea0b5'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+h); ctx.lineTo(cssW-pad.r,pad.t+h); ctx.stroke();
+    const gap = Math.max(5, w/100); const slot=w/12; const barW=Math.min(34, slot-gap);
+    const chartMonthLabels = ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogos','Sept','Okt','Nov','Dis'];
+    chartRects=[];
+    vals.forEach((v,i)=>{
+      const barH = v/niceMax*h; const x=pad.l+i*slot+(slot-barW)/2; const y=pad.t+h-barH;
+      const grad=ctx.createLinearGradient(0,y,0,pad.t+h); grad.addColorStop(0,'#1e67d6'); grad.addColorStop(1,'#70a8f3');
+      roundRect(ctx,x,y,barW,Math.max(barH,1),7); ctx.fillStyle=grad; ctx.fill();
+      ctx.fillStyle='#53667d'; ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font='800 13px system-ui'; ctx.fillText(chartMonthLabels[i],x+barW/2,pad.t+h+12);
+      chartRects.push({x,y,w:barW,h:Math.max(barH,1),index:i,value:v});
+    });
+    if (vals.every(v=>v===0)) { ctx.fillStyle='#8b99a9'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.font='12px system-ui'; ctx.fillText('Belum ada data perbelanjaan untuk dipaparkan',pad.l+w/2,pad.t+h/2-5); }
+  }
+  function axisNumber(v) { return new Intl.NumberFormat('en-MY', { maximumFractionDigits:0 }).format(v); }
+  function roundRect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+  function chartMove(ev) {
+    const canvas=$('expenseChart'), rect=canvas.getBoundingClientRect(), x=ev.clientX-rect.left, y=ev.clientY-rect.top;
+    const hit=chartRects.find(r=>x>=r.x-3 && x<=r.x+r.w+3 && y>=r.y-5 && y<=r.y+r.h+5);
+    const tt=$('chartTooltip');
+    if(!hit){tt.classList.remove('show'); canvas.style.cursor='default'; return;}
+    tt.innerHTML=`<strong>${money.format(hit.value)}</strong>`; tt.style.left=(hit.x+hit.w/2)+'px'; tt.style.top=Math.max(hit.y,38)+'px'; tt.classList.add('show'); canvas.style.cursor='pointer';
+  }
+  function chartClick(ev) {
+    const canvas=$('expenseChart'), rect=canvas.getBoundingClientRect(), x=ev.clientX-rect.left, y=ev.clientY-rect.top;
+    const hit=chartRects.find(r=>x>=r.x-4 && x<=r.x+r.w+4 && y>=r.y-8 && y<=r.y+r.h+8);
+    if(hit){ activeMonthFilter=hit.index; renderDashboardTable(); document.querySelector('.table-card').scrollIntoView({behavior:'smooth',block:'start'}); }
+  }
+
+  function renderReportBomTable() {
+    const sourceBody = $('excelSummaryBody');
+    const targetBody = $('reportExcelSummaryBody');
+    if (!sourceBody || !targetBody) return;
+
+    const holder = document.createElement('tbody');
+    holder.innerHTML = sourceBody.innerHTML;
+
+    holder.querySelectorAll('button').forEach(btn=>{
+      const span = document.createElement('span');
+      span.className = btn.classList.contains('bom-edit-trigger') ? 'report-readonly-bom' : 'report-readonly-text';
+      span.textContent = btn.textContent;
+      btn.replaceWith(span);
+    });
+    holder.querySelectorAll('input').forEach(input=>{
+      const span = document.createElement('span');
+      span.className = 'report-readonly-text';
+      span.textContent = input.value || '';
+      input.replaceWith(span);
+    });
+
+    targetBody.innerHTML = holder.innerHTML;
+    const empty = $('reportExcelSummaryEmpty');
+    if (empty) empty.style.display = targetBody.children.length ? 'none' : 'block';
+    if (activeView==='report') setTimeout(refreshReportExcelFloatingUI, 0);
+  }
+
+  function formatReportGeneratedAt(date=new Date()) {
+    const day = date.getDate();
+    const month = MONTHS[date.getMonth()];
+    const year = date.getFullYear();
+    const hour24 = date.getHours();
+    const hour12 = hour24 % 12 || 12;
+    const minute = String(date.getMinutes()).padStart(2,'0');
+    const period = hour24 < 12 ? 'am' : 'pm';
+    return `${day} ${month} ${year}, ${hour12}:${minute} ${period}`;
+  }
+
+  function renderReport() {
+    const m=metrics();
+    $('reportApproved').textContent=money.format(m.approved);
+    $('reportSpent').textContent=money.format(m.spent);
+    $('reportBalance').textContent=money.format(m.balance);
+    renderReportBomTable();
+    $('reportGeneratedAt').textContent='Dijana: '+formatReportGeneratedAt(new Date());
+  }
+
+  // v28: Cetak PDF kembali menggunakan dialog cetakan standard pelayar.
+  // Header/footer seperti file://, tarikh/masa dan "5 of 5" dikawal oleh pelayar, bukan HTML ini.
+  function printReportPdf() {
+    renderReport();
+    const originalTitle = document.title;
+    document.title = '​';
+    let restored = false;
+    const restoreTitle = () => {
+      if (restored) return;
+      restored = true;
+      document.title = originalTitle;
+    };
+    window.addEventListener('afterprint', restoreTitle, {once:true});
+    window.print();
+    setTimeout(restoreTitle, 2500);
+  }
+
+  function exportCsv() {
+    const rows = yearExpenses().sort((a,b)=>Number(a.month)-Number(b.month));
+    const headers=['Bil','Tahun','BOM Paper','Peruntukan Diluluskan (RM)','Nama Program','Bulan','Butiran Perbelanjaan','Perbelanjaan (RM)'];
+    const data=rows.map((e,i)=>[i+1,selectedYear,e.bom,getAllocationAmount(e.bom).toFixed(2),e.program||'',MONTHS[Number(e.month)]||'',e.detail||'',Number(e.amount).toFixed(2)]);
+    const csv='\uFEFF'+[headers,...data].map(row=>row.map(csvCell).join(',')).join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`Laporan_Perbelanjaan_Latihan_MPC_${selectedYear}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showToast('Fail CSV berjaya dijana.','success');
+  }
+  function csvCell(v){ const s=String(v??''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+
+  function showToast(msg,type='') { const t=$('toast'); t.textContent=msg; t.className='toast show '+type; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='toast',3000); }
+  function openSidebar(){ $('sidebar').classList.add('open'); $('overlay').classList.add('show'); }
+  function closeSidebar(){ $('sidebar').classList.remove('open'); $('overlay').classList.remove('show'); }
+
+  // Rekod program disimpan secara berasingan agar tidak mengubah data perbelanjaan sedia ada.
+  const PROGRAM_STORAGE_KEY = 'mpcTrainingProgramRegister_v1';
+  let programEntries = [];
+  let editingProgramId = null;
+  try {
+    const stored = JSON.parse(localStorage.getItem(PROGRAM_STORAGE_KEY) || '[]');
+    if (Array.isArray(stored)) programEntries = stored;
+  } catch (_) { programEntries = []; }
+  function storePrograms() {
+    try {
+      localStorage.setItem(PROGRAM_STORAGE_KEY,JSON.stringify(programEntries));
+      return true;
+    } catch (_) {
+      // Rekod masih dipaparkan pada sesi semasa walaupun storan pelayar disekat.
+      showToast('Program dipaparkan, tetapi storan pelayar disekat. Rekod mungkin hilang selepas halaman ditutup.','error');
+      return false;
+    }
+  }
+  function programDate(v) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v || '')) return '-';
+    const [y,m,d] = v.split('-'); return `${d}/${m}/${y}`;
+  }
+  function clearProgramForm() {
+    editingProgramId=null;
+    $('programForm').reset();
+    $('programSubmit').textContent='Tambah';
+    $('programReset').disabled=true;
+    $('programDelete').disabled=true;
+  }
+  function renderPrograms() {
+    const q = ($('programSearch').value || '').trim().toLocaleLowerCase('ms');
+    const list=programEntries.filter(p=>Number(p.year)===Number(selectedYear) && String(p.name).toLocaleLowerCase('ms').includes(q)).sort((a,b)=>a.start.localeCompare(b.start)||a.name.localeCompare(b.name,'ms'));
+    $('programCount').textContent=`${list.length} program • Tahun ${selectedYear}`;
+    $('programListBody').innerHTML=list.map((p,i)=>`<tr><td><span class="summary-index">${i+1}</span></td><td class="program-name"><button type="button" class="program-name-link" data-program-edit="${escapeHtml(p.id)}" title="Klik untuk sunting program" aria-label="Sunting ${escapeHtml(p.name)}">${escapeHtml(p.name)}</button></td><td>${programDate(p.start)}</td><td>${programDate(p.end)}</td></tr>`).join('');
+    $('programEmpty').style.display=list.length?'none':'block';
+    $('programEmpty').textContent=q?'Tiada program sepadan dengan carian.':'Belum ada program didaftarkan bagi tahun ini.';
+  }
+  function readProgramFields() {
+    const name=$('programRegisterName').value.trim().replace(/\s+/g,' ');
+    const start=$('programStart').value, end=$('programEnd').value;
+    if (!name || !start || !end) {
+      const missing = !name ? $('programRegisterName') : !start ? $('programStart') : $('programEnd');
+      showToast(!name ? 'Sila isi Nama Program.' : !start ? 'Sila pilih Tarikh Mula.' : 'Sila pilih Tarikh Tamat.','error');
+      missing.focus(); return null;
+    }
+    if (end<start) {showToast('Tarikh tamat tidak boleh lebih awal daripada tarikh mula.','error');return null;}
+    return {name,start,end};
+  }
+  $('programForm').addEventListener('invalid',e=>{
+    if (e.target && e.target.id === 'programRegisterName') showToast('Sila isi Nama Program.','error');
+    else if (e.target && e.target.id === 'programStart') showToast('Sila pilih Tarikh Mula.','error');
+    else if (e.target && e.target.id === 'programEnd') showToast('Sila pilih Tarikh Tamat.','error');
+  },true);
+  $('programForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const values=readProgramFields();
+    if (!values) return;
+    programEntries.push({id:uid('program'),year:Number(selectedYear),...values});
+    const saved=storePrograms();
+    clearProgramForm();
+    $('programSearch').value='';
+    renderPrograms();
+    if(saved) showToast('Program berjaya ditambah.','success');
+  });
+  $('programReset').addEventListener('click',()=>{
+    if(!editingProgramId){showToast('Klik nama program dalam jadual untuk kemaskini.','error');return;}
+    const values=readProgramFields();if(!values)return;
+    const ix=programEntries.findIndex(p=>p.id===editingProgramId);
+    if(ix<0){showToast('Rekod program tidak ditemui.','error');clearProgramForm();return;}
+    programEntries[ix]={...programEntries[ix],...values};
+    const saved=storePrograms(); clearProgramForm(); $('programSearch').value=''; renderPrograms(); if(saved) showToast('Program berjaya dikemaskini.','success');
+  });
+  $('programDelete').addEventListener('click',()=>{
+    if (!editingProgramId) {showToast('Klik nama program dalam jadual untuk memilih rekod yang hendak dipadam.','error');return;}
+    const ix=programEntries.findIndex(p=>p.id===editingProgramId);
+    if(ix<0){showToast('Rekod program tidak ditemui.','error');clearProgramForm();return;}
+    const program=programEntries[ix];
+    if(!confirm(`Adakah anda pasti mahu memadam program \"${program.name}\"? Tindakan ini tidak boleh dibuat asal.`))return;
+    programEntries.splice(ix,1);
+    const saved=storePrograms();
+    clearProgramForm();
+    $('programSearch').value='';
+    renderPrograms();
+    if(saved) showToast('Program berjaya dipadam.','success');
+  });
+  $('programSearch').addEventListener('input',renderPrograms);
+  $('programListBody').addEventListener('click',e=>{
+    const edit=e.target.closest('[data-program-edit]');
+    if(!edit)return;
+    const p=programEntries.find(x=>x.id===edit.dataset.programEdit);if(!p)return;
+    editingProgramId=p.id;
+    $('programRegisterName').value=p.name;
+    $('programStart').value=p.start;
+    $('programEnd').value=p.end;
+    $('programReset').disabled=false;
+    $('programDelete').disabled=false;
+    $('programForm').scrollIntoView({behavior:'smooth',block:'center'});
+    $('programRegisterName').focus({preventScroll:true});
+  });
+  document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
+  $('yearSelect').addEventListener('change',()=>{selectedYear=Number($('yearSelect').value); activeMonthFilter=null; summaryUI.expanded.clear(); clearForm(); clearProgramForm(); renderAll(); renderPrograms();});
+  if ($('goExpenseBtn')) $('goExpenseBtn').addEventListener('click',()=>switchView('expense'));
+  if ($('goReportBtn')) $('goReportBtn').addEventListener('click',()=>switchView('report'));
+  $('bomPaper').addEventListener('change',()=>{
+    const a = getAllocationByBom($('bomPaper').value);
+    // Kekalkan rekod yang telah dipilih apabila tajuk BOM sedang ditukar.
+    if (selectedAllocationId) {
+      $('updateBtn').disabled=false;
+      $('deleteBtn').disabled=false;
+      return;
+    }
+    if (selectedExpenseId) {
+      if (a) $('approvedAllocation').value=Number(a.allocation).toFixed(2);
+      $('updateBtn').disabled=false;
+      $('deleteBtn').disabled=false;
+      return;
+    }
+    selectedAllocationId = a ? a.id : null;
+    if(a) $('approvedAllocation').value=Number(a.allocation).toFixed(2);
+    $('updateBtn').disabled=false;
+    $('deleteBtn').disabled=false;
+  });
+  $('expenseForm').addEventListener('submit',addRecord);
+  $('updateBtn').addEventListener('click',updateSelected);
+  $('deleteBtn').addEventListener('click',deleteSelected);
+  $('dashboardSearch').addEventListener('input',()=>{renderDashboardTable();$('summaryScroll').scrollTop=0;});
+  $('printBtn').addEventListener('click',printReportPdf);
+  $('menuBtn').addEventListener('click',openSidebar); $('overlay').addEventListener('click',closeSidebar);
+  $('expenseChart').addEventListener('mousemove',chartMove); $('expenseChart').addEventListener('mouseleave',()=>{$('chartTooltip').classList.remove('show')});
+  window.addEventListener('resize',()=>{if(activeView==='dashboard')drawChart(); if(window.innerWidth>820)closeSidebar();});
+
+  initSummaryUI(); buildMonthSelect(); buildYearSelect(); selectedYear=currentYear; $('yearSelect').value=String(currentYear); renderAll(); renderPrograms(); initExcelFloatingUI(); initReportExcelFloatingUI();
+})();
+</script>
+</body>
+</html>
